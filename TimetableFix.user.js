@@ -8,8 +8,8 @@
 // @match       https://link.stleonards.vic.edu.au/
 // @grant       unsafeWindow
 // @run-at      document-start
-// @downloadURL https://github.com/XavXav82/Timetable-Fixer/blob/main/TimetableFix.js
-// @updateURL   https://github.com/XavXav82/Timetable-Fixer/blob/main/TimetableFix.js
+// @downloadURL https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
+// @updateURL   https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
 // ==/UserScript==
 window.onload = function() {
         //Timetable page
