@@ -13,6 +13,8 @@
 // @grant       unsafeWindow
 // @grant       GM.getValue
 // @grant       GM.setValue
+// @downloadURL https://github.com/XavXav82/Timetable-Fixer/raw/beta/TimetableFix.user.js
+// @updateURL   https://github.com/XavXav82/Timetable-Fixer/raw/beta/TimetableFix.user.js
 // @run-at      document-start
 // ==/UserScript==
 
