@@ -65,20 +65,25 @@ function searchList(){
         }
         name[0] = name1.join(" ");
         h31.innerHTML = name[0];
+      
         let img1 = document.createElement("img");
-        img1.src = "https://xavxav82.github.io/stljson.github.io/fail.png";
+        img1.src = "https://link.stleonards.vic.edu.au/portrait.php?id="+name[1]+"&size=square64";
+      
         let a1 = document.createElement("a");
         a1.href = "/eportfolio/"+name[1]+"/profile";
         a1.appendChild(img1);
         a1.appendChild(h31);
+      
         let div1 = document.createElement("div");
         div1.classList.add("card");
         div1.classList.add("small-12");
         console.log(div1.class);
         div1.appendChild(a1);
+      
         let div2 = document.createElement("div");
         div2.classList.add("list-item");
         div2.appendChild(div1);
+      
         let li1 = document.createElement("li");
         li1.classList.add("actions-small-1");
         li1.appendChild(div2);
