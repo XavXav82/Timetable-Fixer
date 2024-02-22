@@ -56,18 +56,20 @@ var nameList;
 function searchList(){
 
     for(let i=0;i<nameList.length;i++){
+        //Splitting the parameter into name [0] and number[1]
         let name = nameList[i].split("+");
         let h31 = document.createElement("h3");
+        //Format the name (remove spaces and Capitalise name)
         let name1 = name[0].split("%20");
         for(let j = 0;j<name1.length;j++){
             name1[j] = name1[j][0].toUpperCase() + name1[j].substr(1);
-            //console.log(name1[j]);
         }
         name[0] = name1.join(" ");
         h31.innerHTML = name[0];
-      
+
+        //Creating and combining HTML objects
         let img1 = document.createElement("img");
-        img1.src = "https://link.stleonards.vic.edu.au/portrait.php?id="+name[1]+"&size=square64";
+        img1.src = "https://link.stleonards.vic.edu.au/portrait.php?id="+name[1]+"&size=square64";//Get the users pfp
       
         let a1 = document.createElement("a");
         a1.href = "/eportfolio/"+name[1]+"/profile";
@@ -77,7 +79,6 @@ function searchList(){
         let div1 = document.createElement("div");
         div1.classList.add("card");
         div1.classList.add("small-12");
-        console.log(div1.class);
         div1.appendChild(a1);
       
         let div2 = document.createElement("div");
@@ -87,8 +88,9 @@ function searchList(){
         let li1 = document.createElement("li");
         li1.classList.add("actions-small-1");
         li1.appendChild(div2);
+  
+        //Add to the page
         document.getElementsByClassName("action-list")[0].appendChild(li1);
-        //console.log(document.getElementsByClassName("action-list").length);
     }
 }
 
@@ -103,47 +105,22 @@ window.onload = function() {
             //Headings
             let rows = document.getElementsByTagName("tr");
 
-            //Following for loops act to reassign location of active box from period b to a
-            //Period 1b
-            let divs1 = rows[2].getElementsByTagName("div");
-            for(let i=0;i<29;i++){
-                if(divs1[i].className == "timetable-subject-active"){
-                    (rows[1].getElementsByTagName("div"))[i].className = "timetable-subject-active";
+            //Reassign location of active box from period b to a
+            for(let p=2;p<7;p++){
+                if(p==5){continue;} //Works for 2-6, excluding 5 because that is homeroom
+                let divs1 = rows[p].getElementsByTagName("div");
+                for(let i=0;i<29;i++){
+                    if(divs1[i].className == "timetable-subject-active"){
+                        (rows[p-1].getElementsByTagName("div"))[i].className = "timetable-subject-active";
+                    }
                 }
+                //Remove period b
+                rows[p].remove();
             }
-            rows[2].remove();
-
-            //Period 2b
-            let divs2 = rows[3].getElementsByTagName("div");
-            for(let i=0;i<29;i++){
-                if(divs2[i].className == "timetable-subject-active"){
-                    (rows[2].getElementsByTagName("div"))[i].className = "timetable-subject-active";
-                }
-            }
-            rows[3].remove();
-
-            //Period 3b
-            let divs3 = rows[4].getElementsByTagName("div");
-            for(let i=0;i<29;i++){
-                if(divs3[i].className == "timetable-subject-active"){
-                    (rows[3].getElementsByTagName("div"))[i].className = "timetable-subject-active";
-                }
-
-            }
-            rows[4].remove();
-
-            //Period 4b
-            let divs4 = rows[6].getElementsByTagName("div");
-            for(let i=0;i<29;i++){
-                if(divs4[i].className == "timetable-subject-active"){
-                    (rows[5].getElementsByTagName("div"))[i].className = "timetable-subject-active";
-                }
-            }
-            rows[6].remove();
 
 
 
-            //Classes
+            //Rename classes
             let headings = document.getElementsByTagName("th");
             headings[11].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
             headings[12].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
@@ -218,7 +195,7 @@ window.onload = function() {
                 }
             }
 
-            //Cocurricular
+            //Cocurricular removal
             periods[16].remove();
             periods[17].remove();
             periods[18].remove();
@@ -229,6 +206,7 @@ window.onload = function() {
             rows[18].remove();
             rows[21].remove();
 
+            //Cocurricular renaming
             rows[15].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
             rows[16].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
             rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
