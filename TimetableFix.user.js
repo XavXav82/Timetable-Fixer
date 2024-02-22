@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.7
+// @version     1.7.1
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
