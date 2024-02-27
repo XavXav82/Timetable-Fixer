@@ -175,9 +175,10 @@ window.onload = function() {
 
             //Assigning colours
             for(let i = 0;i<yes.length;i++){
+                let tempDivs = yes[i].getElementsByTagName("div")[1];
                 for (const property in subjects) {
-                    if((yes[i].innerHTML).search(`${subjects[property]}`) != -1 && (yes[i].innerHTML).search("Private Study") == -1){
-                        yes[i].style.backgroundColor = `${colours[property]}`;
+                    if((tempDivs.innerHTML).search(`${subjects[property]}`) != -1 && (tempDivs.innerHTML).search("Private Study") == -1){
+                        tempDivs.style.backgroundColor = `${colours[property]}`;
                     } else if((yes[i].innerHTML).search("Private Study") != -1 && removePS == true){
                         yes[i].innerHTML = "";
                     }
