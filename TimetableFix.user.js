@@ -19,6 +19,9 @@
 //Change this to remove private study, leaving the spot blank
 let removePS = true;
 
+//Cheeky global variable for searches
+let parent = false;
+
 //Colours
 //Change your classes to the colours you want, ignore the rest
 //You can use the colours I have provided, or use your own RGB values
@@ -72,7 +75,11 @@ function searchList(){
         img1.src = "https://link.stleonards.vic.edu.au/portrait.php?id="+name[1]+"&size=square64";//Get the users pfp
       
         let a1 = document.createElement("a");
-        a1.href = "/eportfolio/"+name[1]+"/profile";
+        if(!parent){
+            a1.href = "/eportfolio/"+name[1]+"/profile";
+        }else{
+            a1.href = "/search/user/"+name[1];
+        }
         a1.appendChild(img1);
         a1.appendChild(h31);
       
@@ -219,15 +226,17 @@ window.onload = function() {
             em[0].remove();
             const queryString = window.location.search;
             let tempParam = (queryString.split("keyword="))[1];
-            let params = (tempParam.split("&searchval="));
-            nameList = params[0].split(",");
-            //for(let i=0;i<nameList.length;i++){
-            //    console.log(nameList[i]);
-            //}
-            //console.log(nameList);
+            let tempParams = (tempParam.split("&searchval="));
+            nameList = tempParams[0].split(",");
+            let finalParams = tempParams[1].split("&parent=");//0 is search query, 1 is parent variable
+
+            if(finalParams.length > 1){
+                parent = true
+            }
+
             let divs = document.getElementsByClassName("small-12 island");
             let h1 = divs[0].getElementsByTagName("h1");
-            h1[0].innerHTML = "Search Results for "+params[1];
+            h1[0].innerHTML = "Search Results for "+finalParams[0];
             setTimeout(searchList, 2500);
 
         }
