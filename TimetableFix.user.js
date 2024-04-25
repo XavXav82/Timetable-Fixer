@@ -1,26 +1,19 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.7.2
+// @version     1.7.3
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
 // @match       https://link.stleonards.vic.edu.au/
 // @match       https://link.stleonards.vic.edu.au/*
-// @match       https://link.stleonards.vic.edu.au/eportfolio
-// @match       https://link.stleonards.vic.edu.au/eportfolio/*
 // @grant       unsafeWindow
 // @run-at      document-start
-// @downloadURL https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
-// @updateURL   https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
 // ==/UserScript==
 
 
-//Change this to remove private study, leaving the spot blank
+//Change this to remove private study, leaving the spot blank in its absense
 let removePS = true;
-
-//Cheeky global variable for searches
-let parent = false;
 
 //Colours
 //Change your classes to the colours you want, ignore the rest
@@ -53,52 +46,118 @@ const subjects = { methods: "Methods", english: "English", specialist: "Speciali
 const colours = { methods: meth, english: eng, specialist: spec, physics: phys, homeroom: HR, softwaredev: soft, economics: eco,
                  systems: sys, accounting: acc, data: data, legal: legal, general: general, anal:IBMath, music:IBMusic, IBcomp:IBcomputer};
 
-
+//Cheeky global variable for searches later
+let parent = false;
 
 var nameList;
 function searchList(){
+    //Delete all search results that are already there
+    document.getElementsByClassName("l-flex-col")[22].innerHTML = "";
 
+    //iterates for every name in nameList
     for(let i=0;i<nameList.length;i++){
-        //Splitting the parameter into name [0] and number[1]
-        let name = nameList[i].split("+");
-        let h31 = document.createElement("h3");
-        //Format the name (remove spaces and Capitalise name)
-        let name1 = name[0].split("%20");
-        for(let j = 0;j<name1.length;j++){
-            name1[j] = name1[j][0].toUpperCase() + name1[j].substr(1);
-        }
-        name[0] = name1.join(" ");
-        h31.innerHTML = name[0];
 
-        //Creating and combining HTML objects
-        let img1 = document.createElement("img");
-        img1.src = "https://link.stleonards.vic.edu.au/portrait.php?id="+name[1]+"&size=square64";//Get the users pfp
-      
-        let a1 = document.createElement("a");
-        if(!parent){
-            a1.href = "/eportfolio/"+name[1]+"/profile";
-        }else{
-            a1.href = "/search/user/"+name[1];
+        //Formatting
+        let name = nameList[i].split("+");//Split the name [0] from the number [-1]
+        let number = name[name.length-1];
+        name.pop();
+
+        let h31 = document.createElement("h3");
+
+        let name1 = name[0];//split at space
+
+        //For loop to capitalise first letter
+        //no idea how this works, yuhao did it
+        //needed because all params become lower case for some reason
+        for(let j = 0;j<name.length;j++){
+            name[j] = name[j][0].toUpperCase() + name[j].substr(1);
         }
-        a1.appendChild(img1);
-        a1.appendChild(h31);
-      
+        let realName = name.join(" ");//rejoin the words or whatever, thank yuhao
+
+
+        //Creating and formatting HTML objects
+        let img1 = document.createElement("img");
+        //Try to get a picture, if it exists
+        img1.src = "https://link.stleonards.vic.edu.au/portrait.php?id="+number+"&size=square64";
+        //Give the appropriate link depending on the parent or student
+        let a1 = document.createElement("a");
+        let a2 = document.createElement("a");
+        if(!parent){
+            a1.href = "/eportfolio/"+number+"/profile";
+            a2.href = "/eportfolio/"+number+"/profile";
+        }else{
+            a1.href = "/search/user/"+number;
+            a2.href = "/search/user/"+number;
+        }
+
+        h31.appendChild(a1);
+        a1.innerHTML = realName;
+
+        //Creating and formatting objects
         let div1 = document.createElement("div");
-        div1.classList.add("card");
-        div1.classList.add("small-12");
-        div1.appendChild(a1);
-      
         let div2 = document.createElement("div");
-        div2.classList.add("list-item");
-        div2.appendChild(div1);
-      
-        let li1 = document.createElement("li");
-        li1.classList.add("actions-small-1");
-        li1.appendChild(div2);
-  
-        //Add to the page
-        document.getElementsByClassName("action-list")[0].appendChild(li1);
+        let div3 = document.createElement("div");
+        let div4 = document.createElement("div");
+        let div5 = document.createElement("div");
+        let div6 = document.createElement("div");
+        let div7 = document.createElement("div");
+
+        div1.classList.add("l-flex-col","l-flex--justify-center","l-flex__item--1","f-no-margins");
+        div3.classList.add("c-img", "c-img--round");
+        div2.classList.add("c-img__wrapper");
+        div4.classList.add("l-flex-row","l-gap-m");
+        div5.classList.add("l-flex-col","l-gap-m","l-pad-m");
+        div6.classList.add("c-card");
+        div7.classList.add("l-flex-col");
+
+        div1.appendChild(h31);
+        div2.appendChild(img1);
+        a2.appendChild(div2);
+        div3.appendChild(a2);
+        div4.appendChild(div3);
+        div4.appendChild(div1);
+        div5.appendChild(div4);
+        div6.appendChild(div5);
+        div7.appendChild(div6);
+
+        //Append the new object to the a specific div on the page
+        document.getElementsByClassName("l-flex-col")[22].prepend(div7);
     }
+}
+
+function createFilters(filterList){
+    //document.createElement("");
+    let label = document.createElement("label");
+    let checkBox = document.createElement("input");
+    let firstDiv = document.createElement("div");
+    let secondDiv = document.createElement("div");
+    let listElement = document.createElement("li");
+
+    label.classList.add("f-no-margins");
+    label.innerHTML = "Parents"
+    label.htmlFor = "parent";
+    
+    checkBox.type = "checkbox";
+    checkBox.classList.add("parent")
+    checkBox.id = "parent";
+    
+    firstDiv.classList.add("l-flex__item--1");
+    
+    secondDiv.classList.add("l-flex-row");
+    secondDiv.classList.add("l-flex--align-center");
+    secondDiv.classList.add("f-min-btn-height");
+    secondDiv.classList.add("f-no-margins");
+    
+    
+    listElement.classList.add("l-flex-col")
+    listElement.classList.add("f-min-btn-height")
+
+    firstDiv.appendChild(checkBox);
+    firstDiv.appendChild(label);
+    secondDiv.append(firstDiv);
+    listElement.appendChild(secondDiv);
+    filterList.prepend(listElement);
+
 }
 
 
@@ -107,27 +166,36 @@ window.onload = function() {
             var searchBar = document.getElementById("search");
             searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
         } catch{}
+
+        let sidebar = document.getElementById("message-list");
+        let notifContainer = sidebar.getElementsByTagName("li")[2];
+        let notifList = notifContainer.getElementsByTagName("li");
+
+        for(let i=0;i<notifList.length;i++){
+            if(notifList[i].innerHTML.search("mark") != -1){
+                notifList[i].remove();
+                i--;
+            }
+        }
+
         //Timetable page
         if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
             //Headings
             let rows = document.getElementsByTagName("tr");
 
-            //Reassign location of active box from period b to a
+            //Following for loops act to reassign location of active box from period b to a
             for(let p=2;p<7;p++){
-                if(p==5){continue;} //Works for 2-6, excluding 5 because that is homeroom
+                if(p==5){continue;}
                 let divs1 = rows[p].getElementsByTagName("div");
                 for(let i=0;i<29;i++){
                     if(divs1[i].className == "timetable-subject-active"){
                         (rows[p-1].getElementsByTagName("div"))[i].className = "timetable-subject-active";
                     }
                 }
-                //Remove period b
                 rows[p].remove();
             }
 
-
-
-            //Rename classes
+            //Classes
             let headings = document.getElementsByTagName("th");
             headings[11].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
             headings[12].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
@@ -139,9 +207,11 @@ window.onload = function() {
             //Assigning colours
             for(let i = 23;i<171;i++){
                 for (const property in subjects) {
+                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                     if((classes[i].innerHTML).search(`${subjects[property]}`) != -1 && (classes[i].innerHTML).search("Private Study") == -1){
                         classes[i].style.backgroundColor = `${colours[property]}`;
                     } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                        //Removes private study
                         classes[i].remove();
                     }
                 }
@@ -152,9 +222,12 @@ window.onload = function() {
             //Remove and replace period headings
             let rows = document.getElementsByTagName("th");
             let yes = document.getElementsByTagName("td");
-            console.log(yes[1].innerHTML);
+
             let divs = 0;
             let a = 0
+
+            //Add the active box to the period preceeding the currently active one
+            //If on an a period already its fine because it is put on a b period and it gets removed later
             for(let i = 1; i<10;i++){
                 divs = yes[i].getElementsByTagName("div");
                 if(divs[0].className == "timetable-subject-active"){
@@ -163,7 +236,7 @@ window.onload = function() {
                 }
             }
 
-            //Deleting classes
+            //Deleting period headders
             rows[1].remove();
             rows[2].remove();
             rows[3].remove();
@@ -173,7 +246,7 @@ window.onload = function() {
             rows[2].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
             rows[4].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
-            //Deleting period headers
+            //Deleting period blocks
             let periods = document.getElementsByTagName("td");
             periods[1].remove();
             periods[2].remove();
@@ -181,8 +254,11 @@ window.onload = function() {
             periods[5].remove();
 
             //Assigning colours
-            for(let i = 0;i<yes.length;i++){
+            console.log(yes.length);
+            for(let i = 1;i<yes.length;i++){
+                console.log(i);
                 let tempDivs = yes[i].getElementsByTagName("div")[1];
+                console.log(tempDivs);
                 for (const property in subjects) {
                     if((tempDivs.innerHTML).search(`${subjects[property]}`) != -1 && (tempDivs.innerHTML).search("Private Study") == -1){
                         tempDivs.style.backgroundColor = `${colours[property]}`;
@@ -203,7 +279,7 @@ window.onload = function() {
                 }
             }
 
-            //Cocurricular removal
+            //Cocurricular
             periods[16].remove();
             periods[17].remove();
             periods[18].remove();
@@ -214,30 +290,39 @@ window.onload = function() {
             rows[18].remove();
             rows[21].remove();
 
-            //Cocurricular renaming
             rows[15].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
             rows[16].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
             rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
             rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
         }else if(window.location.href.search("search")!=-1){
+            let filterList = document.getElementsByClassName("option-list")[0];
+            let temp = document.createElement("div");
+            createFilters(filterList);
 
-            let em = document.getElementsByTagName("em");
-            em[0].remove();
+            let searchField = document.getElementById("search-field");
+            searchField.innerHTML = ("bruh")
+            //let em = document.getElementsByTagName("em");
+            //em[0].remove();
             const queryString = window.location.search;
             let tempParam = (queryString.split("keyword="))[1];
-            let tempParams = (tempParam.split("&searchval="));
-            nameList = tempParams[0].split(",");
+            let tempParams = (tempParam.split("&filter="))[0];
+
+            nameList = tempParams.split("%2C");
             let finalParams = tempParams[1].split("&parent=");//0 is search query, 1 is parent variable
 
             if(finalParams.length > 1){
+                //dont bother actually checking the param because it works like this (until i want to add another param)
                 parent = true
             }
 
-            let divs = document.getElementsByClassName("small-12 island");
-            let h1 = divs[0].getElementsByTagName("h1");
-            h1[0].innerHTML = "Search Results for "+finalParams[0];
-            setTimeout(searchList, 2500);
+
+            //let divs = document.getElementsByClassName("small-12 island");
+            //let h1 = divs[0].getElementsByTagName("h1");
+            //h1[0].innerHTML = "Search Results for "+finalParams[0];
+
+            //runs the searchlist function after 2.5 secs because it need to load first
+            setTimeout(searchList, 1500);
 
         }
 };
