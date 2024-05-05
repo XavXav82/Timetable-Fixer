@@ -1,20 +1,27 @@
 // ==UserScript==
-// @name        Timetable fixer
+// @name        Timetable fixerqqqqqqqqqqqqq
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.7.3
+// @version     1.8.0 - prerelease 1
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
 // @match       https://link.stleonards.vic.edu.au/
 // @match       https://link.stleonards.vic.edu.au/*
+// @match       https://xavxav82.github.io/stljson.github.io/colours
 // @grant       unsafeWindow
+// @grant       GM.getValue
+// @grant       GM.setValue
 // @run-at      document-start
 // ==/UserScript==
+
 
 
 //Change this to remove private study, leaving the spot blank in its absense
 let removePS = true;
 
+//Chenge this to have grade notifications present
+let gradeNotifs = false;
+/*
 //Colours
 //Change your classes to the colours you want, ignore the rest
 //You can use the colours I have provided, or use your own RGB values
@@ -45,6 +52,7 @@ const subjects = { methods: "Methods", english: "English", specialist: "Speciali
 //Add the name of the variable used for colour
 const colours = { methods: meth, english: eng, specialist: spec, physics: phys, homeroom: HR, softwaredev: soft, economics: eco,
                  systems: sys, accounting: acc, data: data, legal: legal, general: general, anal:IBMath, music:IBMusic, IBcomp:IBcomputer};
+*/
 
 //Cheeky global variable for searches later
 let parent = false;
@@ -58,7 +66,7 @@ function searchList(){
     for(let i=0;i<nameList.length;i++){
 
         //Formatting
-        let name = nameList[i].split("+");//Split the name [0] from the number [-1]
+        let name = nameList[i].split("+");//Split the name [0--2] from the number [-1]
         let number = name[name.length-1];
         name.pop();
 
@@ -136,19 +144,19 @@ function createFilters(filterList){
     label.classList.add("f-no-margins");
     label.innerHTML = "Parents"
     label.htmlFor = "parent";
-    
+
     checkBox.type = "checkbox";
     checkBox.classList.add("parent")
     checkBox.id = "parent";
-    
+
     firstDiv.classList.add("l-flex__item--1");
-    
+
     secondDiv.classList.add("l-flex-row");
     secondDiv.classList.add("l-flex--align-center");
     secondDiv.classList.add("f-min-btn-height");
     secondDiv.classList.add("f-no-margins");
-    
-    
+
+
     listElement.classList.add("l-flex-col")
     listElement.classList.add("f-min-btn-height")
 
@@ -160,171 +168,284 @@ function createFilters(filterList){
 
 }
 
+function Save(){
+    GM.setValue("Sub1Colour",document.getElementById("Sub1").value);
+    GM.setValue("Sub2Colour",document.getElementById("Sub2").value);
+    GM.setValue("Sub3Colour",document.getElementById("Sub3").value);
+    GM.setValue("Sub4Colour",document.getElementById("Sub4").value);
+    GM.setValue("Sub5Colour",document.getElementById("Sub5").value);
+    GM.setValue("Sub6Colour",document.getElementById("study").value);
+    GM.setValue("Sub7Colour",document.getElementById("Sub7").value);
+    window.location.href = "https://link.stleonards.vic.edu.au/timetable";
+}
+
 
 window.onload = function() {
+    let body = document.getElementsByTagName("body")[0];
+    /*let audio = document.createElement("audio");
+    //let video = document.createElement("video");
+    //video.controls = true;
+    //video.autoplay = true;
+    audio.autoplay = true;
+    audio.loop = true;
+    //video.setAttribute("name", "media");
+    //audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
+    //<audio type="audio/mp3"
+    audio.src="https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
+    audio.setAttribute("type", "audio/mp3");
+    //video.prepend(audio);
+    body.prepend(audio);
+    */
+
+
+
+    /*
+    let audio = document.createElement("embed");
+
+    audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
+
+    audio.setAttribute("autoplay","true");
+    audio.setAttribute("loop","true");
+    audio.setAttribute("muted","true");
+
+    audio.height = 200;
+    audio.width = 200;
+
+    body.prepend(audio);
+    */
+    if(window.location.href.search("github.io/colours")==-1){
         try{
             var searchBar = document.getElementById("search");
             searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
         } catch{}
+        if(gradeNotifs == false){
+            let sidebar = document.getElementById("message-list");
+            let notifContainer = sidebar.getElementsByTagName("li")[2];
+            let notifList = notifContainer.getElementsByTagName("li");
 
-        let sidebar = document.getElementById("message-list");
-        let notifContainer = sidebar.getElementsByTagName("li")[2];
-        let notifList = notifContainer.getElementsByTagName("li");
+            for(let i=0;i<notifList.length;i++){
+                if(notifList[i].innerHTML.search("mark") != -1){
+                    notifList[i].remove();
+                    i--;
+                }
+            }
+        }
+        let tempMenu = document.getElementById("top-menu");
+        let tempSpan = document.createElement("span");
+        let tempA = document.createElement("a");
+        let tempLi = document.createElement("li");
 
-        for(let i=0;i<notifList.length;i++){
-            if(notifList[i].innerHTML.search("mark") != -1){
-                notifList[i].remove();
-                i--;
+        tempSpan.innerHTML = "Colours";
+        tempA.href = "https://xavxav82.github.io/stljson.github.io/colours";
+        tempA.title = "Change your timetable's colours!";
+        tempLi.style.display = "list-item";
+
+        tempA.appendChild(tempSpan);
+        tempLi.appendChild(tempA);
+        tempMenu.appendChild(tempLi);
+    }
+
+    //Timetable page
+    if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
+        //Headings
+        let rows = document.getElementsByTagName("tr");
+
+        //Following for loops act to reassign location of active box from period b to a
+        for(let p=2;p<7;p++){
+            if(p==5){continue;}
+            let divs1 = rows[p].getElementsByTagName("div");
+            for(let i=0;i<29;i++){
+                if(divs1[i].className == "timetable-subject-active"){
+                    (rows[p-1].getElementsByTagName("div"))[i].className = "timetable-subject-active";
+                }
+            }
+            rows[p].remove();
+        }
+
+        //Classes
+        let headings = document.getElementsByTagName("th");
+        headings[11].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
+        headings[12].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
+        headings[13].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
+        headings[15].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
+
+        let classes = document.getElementsByClassName("timetable-subject");
+        let colourList = [];
+        //
+        (async () => {
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#ffffff");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ffffff");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#ffffff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#ffffff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffffff");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffffff");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ffffff");
+            colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
+            let subjDict = {};
+            let colourDict = {};
+            //console.log(colourList);
+            //Assigning colours
+            let j=0
+            for(let i = 0;i<classes.length;i++){
+                if(subjDict[classes[i].innerHTML] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
+                    subjDict[classes[i].innerHTML] = classes[i].innerHTML;
+                    colourDict[classes[i].innerHTML] = colourList[j];
+                    j++;
+                }
+            }
+            for(let i = 0;i<classes.length;i++){
+                //for (const property in subjDict) {
+                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                    if((classes[i].innerHTML) == `${subjDict[classes[i].innerHTML]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                        classes[i].style.backgroundColor = `${colourDict[classes[i].innerHTML]}`;
+                        console.log("weuyfgv");
+                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                        //Removes private study
+                        classes[i].innerHTML="";
+                        classes[i].style.backgroundColor="#FFFFFF";
+                    }
+                //}
+            }
+
+        })();/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            /*for (const property in subjects) {
+                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                if((classes[i].innerHTML).search(`${subjects[property]}`) != -1 && (classes[i].innerHTML).search("Private Study") == -1){
+                    classes[i].style.backgroundColor = `${colours[property]}`;
+                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                    //Removes private study
+                    classes[i].remove();
+                }
+            }*/
+
+
+    //Home page
+    } else if(window.location.href=="https://link.stleonards.vic.edu.au/"){
+        //Remove and replace period headings
+        let rows = document.getElementsByTagName("th");
+        let yes = document.getElementsByTagName("td");
+
+        let divs = 0;
+        let a = 0
+
+        //Add the active box to the period preceeding the currently active one
+        //If on an a period already its fine because it is put on a b period and it gets removed later
+        for(let i = 1; i<10;i++){
+            divs = yes[i].getElementsByTagName("div");
+            if(divs[0].className == "timetable-subject-active"){
+                a= yes[i-1].getElementsByTagName("div");
+                a[0].classList.add("timetable-subject-active");
             }
         }
 
-        //Timetable page
-        if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
-            //Headings
-            let rows = document.getElementsByTagName("tr");
+        //Deleting period headders
+        rows[1].remove();
+        rows[2].remove();
+        rows[3].remove();
+        rows[5].remove();
+        rows[0].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
+        rows[1].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
+        rows[2].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
+        rows[4].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
-            //Following for loops act to reassign location of active box from period b to a
-            for(let p=2;p<7;p++){
-                if(p==5){continue;}
-                let divs1 = rows[p].getElementsByTagName("div");
-                for(let i=0;i<29;i++){
-                    if(divs1[i].className == "timetable-subject-active"){
-                        (rows[p-1].getElementsByTagName("div"))[i].className = "timetable-subject-active";
-                    }
-                }
-                rows[p].remove();
-            }
+        //Deleting period blocks
+        let periods = document.getElementsByTagName("td");
+        periods[1].remove();
+        periods[2].remove();
+        periods[3].remove();
+        periods[5].remove();
 
-            //Classes
-            let headings = document.getElementsByTagName("th");
-            headings[11].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
-            headings[12].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
-            headings[13].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
-            headings[15].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
-
-            let classes = document.getElementsByTagName("div");
-
-            //Assigning colours
-            for(let i = 23;i<171;i++){
-                for (const property in subjects) {
-                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                    if((classes[i].innerHTML).search(`${subjects[property]}`) != -1 && (classes[i].innerHTML).search("Private Study") == -1){
-                        classes[i].style.backgroundColor = `${colours[property]}`;
-                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                        //Removes private study
-                        classes[i].remove();
-                    }
+        //Assigning colours
+        console.log(yes.length);
+        for(let i = 1;i<yes.length;i++){
+            console.log(i);
+            let tempDivs = yes[i].getElementsByTagName("div")[1];
+            console.log(tempDivs);
+            for (const property in subjects) {
+                if((tempDivs.innerHTML).search(`${subjects[property]}`) != -1 && (tempDivs.innerHTML).search("Private Study") == -1){
+                    tempDivs.style.backgroundColor = `${colours[property]}`;
+                } else if((yes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                    yes[i].innerHTML = "";
                 }
             }
+        }
 
-        //Home page
-        } else if(window.location.href=="https://link.stleonards.vic.edu.au/"){
-            //Remove and replace period headings
-            let rows = document.getElementsByTagName("th");
-            let yes = document.getElementsByTagName("td");
-
-            let divs = 0;
-            let a = 0
-
-            //Add the active box to the period preceeding the currently active one
-            //If on an a period already its fine because it is put on a b period and it gets removed later
-            for(let i = 1; i<10;i++){
-                divs = yes[i].getElementsByTagName("div");
-                if(divs[0].className == "timetable-subject-active"){
-                    a= yes[i-1].getElementsByTagName("div");
+        //Reassign location of active box from period b to a
+        for(let j = 15; j<25;j++){
+            divs = yes[j].getElementsByTagName("div");
+            if(divs[0].className == "timetable-subject-active"){
+                if(divs[0].innerHTML.search("Period 1A") != -1 && divs[0].innerHTML.search("Period 4A") != -1 && divs[0].innerHTML.search("Period X") != -1 && divs[0].innerHTML.search("After school 2") != -1){
+                    a= yes[j-1].getElementsByTagName("div");
                     a[0].classList.add("timetable-subject-active");
                 }
             }
-
-            //Deleting period headders
-            rows[1].remove();
-            rows[2].remove();
-            rows[3].remove();
-            rows[5].remove();
-            rows[0].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
-            rows[1].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
-            rows[2].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
-            rows[4].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
-
-            //Deleting period blocks
-            let periods = document.getElementsByTagName("td");
-            periods[1].remove();
-            periods[2].remove();
-            periods[3].remove();
-            periods[5].remove();
-
-            //Assigning colours
-            console.log(yes.length);
-            for(let i = 1;i<yes.length;i++){
-                console.log(i);
-                let tempDivs = yes[i].getElementsByTagName("div")[1];
-                console.log(tempDivs);
-                for (const property in subjects) {
-                    if((tempDivs.innerHTML).search(`${subjects[property]}`) != -1 && (tempDivs.innerHTML).search("Private Study") == -1){
-                        tempDivs.style.backgroundColor = `${colours[property]}`;
-                    } else if((yes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                        yes[i].innerHTML = "";
-                    }
-                }
-            }
-
-            //Reassign location of active box from period b to a
-            for(let j = 15; j<25;j++){
-                divs = yes[j].getElementsByTagName("div");
-                if(divs[0].className == "timetable-subject-active"){
-                    if(divs[0].innerHTML.search("Period 1A") != -1 && divs[0].innerHTML.search("Period 4A") != -1 && divs[0].innerHTML.search("Period X") != -1 && divs[0].innerHTML.search("After school 2") != -1){
-                        a= yes[j-1].getElementsByTagName("div");
-                        a[0].classList.add("timetable-subject-active");
-                    }
-                }
-            }
-
-            //Cocurricular
-            periods[16].remove();
-            periods[17].remove();
-            periods[18].remove();
-            periods[21].remove();
-
-            rows[16].remove();
-            rows[17].remove();
-            rows[18].remove();
-            rows[21].remove();
-
-            rows[15].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
-            rows[16].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
-            rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
-            rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
-
-        }else if(window.location.href.search("search")!=-1){
-            let filterList = document.getElementsByClassName("option-list")[0];
-            let temp = document.createElement("div");
-            createFilters(filterList);
-
-            let searchField = document.getElementById("search-field");
-            searchField.innerHTML = ("bruh")
-            //let em = document.getElementsByTagName("em");
-            //em[0].remove();
-            const queryString = window.location.search;
-            let tempParam = (queryString.split("keyword="))[1];
-            let tempParams = (tempParam.split("&filter="))[0];
-
-            nameList = tempParams.split("%2C");
-            let finalParams = tempParams[1].split("&parent=");//0 is search query, 1 is parent variable
-
-            if(finalParams.length > 1){
-                //dont bother actually checking the param because it works like this (until i want to add another param)
-                parent = true
-            }
-
-
-            //let divs = document.getElementsByClassName("small-12 island");
-            //let h1 = divs[0].getElementsByTagName("h1");
-            //h1[0].innerHTML = "Search Results for "+finalParams[0];
-
-            //runs the searchlist function after 2.5 secs because it need to load first
-            setTimeout(searchList, 1500);
-
         }
+
+        //Cocurricular
+        periods[16].remove();
+        periods[17].remove();
+        periods[18].remove();
+        periods[21].remove();
+
+        rows[16].remove();
+        rows[17].remove();
+        rows[18].remove();
+        rows[21].remove();
+
+        rows[15].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
+        rows[16].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
+        rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
+        rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
+
+    }else if(window.location.href.search("search")!=-1){
+        let filterList = document.getElementsByClassName("option-list")[0];
+        let temp = document.createElement("div");
+        createFilters(filterList);
+
+        let searchField = document.getElementById("search-field");
+        searchField.innerHTML = ("bruh")
+        //let em = document.getElementsByTagName("em");
+        //em[0].remove();
+        const queryString = window.location.search;
+        let tempParam = (queryString.split("keyword="))[1];
+        let tempParams = (tempParam.split("&filter="))[0];
+
+        nameList = tempParams.split("%2C");
+        let finalParams = tempParams[1].split("&parent=");//0 is search query, 1 is parent variable
+
+        if(finalParams.length > 1){
+            //dont bother actually checking the param because it works like this (until i want to add another param)
+            parent = true
+        }
+
+        //runs the searchlist function after 2.5 secs because it need to load first
+        setTimeout(searchList, 1500);
+
+    } else if(window.location.href.search("github.io/colours")!=-1){
+
+        (async () => {
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#ffffff");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ffffff");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#ffffff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#ffffff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffffff");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffffff");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ffffff");
+
+            document.getElementById("Sub1").value = Sub1Colour;
+            document.getElementById("Sub2").value = Sub2Colour;
+            document.getElementById("Sub3").value = Sub3Colour;
+            document.getElementById("Sub4").value = Sub4Colour;
+            document.getElementById("Sub5").value = Sub5Colour;
+            document.getElementById("study").value = Sub6Colour;
+            document.getElementById("Sub7").value = Sub7Colour;
+
+        })();
+
+        let button = document.getElementById("button");
+        button.addEventListener("click", Save);
+
+    }
 };
-
-
