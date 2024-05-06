@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixerqqqqqqqqqqqqq
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.0 - prerelease 1
+// @version     1.8.0 - prerelease 2
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -273,13 +273,13 @@ window.onload = function() {
         let colourList = [];
         //
         (async () => {
-            let Sub1Colour = await GM.getValue("Sub1Colour", "#ffffff");
-            let Sub2Colour = await GM.getValue("Sub2Colour", "#ffffff");
-            let Sub3Colour = await GM.getValue("Sub3Colour", "#ffffff");
-            let Sub4Colour = await GM.getValue("Sub4Colour", "#ffffff");
-            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffffff");
-            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffffff");
-            let Sub7Colour = await GM.getValue("Sub7Colour", "#ffffff");
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
             colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
             let subjDict = {};
             let colourDict = {};
