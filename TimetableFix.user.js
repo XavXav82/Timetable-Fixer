@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixerqqqqqqqqqqqqq
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.0 - prerelease 2
+// @version     1.8.0
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -21,38 +21,6 @@ let removePS = true;
 
 //Chenge this to have grade notifications present
 let gradeNotifs = false;
-/*
-//Colours
-//Change your classes to the colours you want, ignore the rest
-//You can use the colours I have provided, or use your own RGB values
-//Do not delete any variables
-let spec = "rgb(255, 204, 245)"; //Pink
-let PS = "rgb(255, 255, 255)"; //White
-let meth = "rgb(204, 224, 255)"; //Blue
-let eng = "rgb(255, 245, 204)"; //Yellow
-let phys = "rgb(255,195,202)"; //Red
-let HR = "rgb(204, 204, 255)"; //Purple
-let soft = "rgb(204, 255, 204)"; //Green
-let eco = "rgb(255, 224, 204)"; //Orange
-let sys = "rgb(204, 255, 204)"; //Green
-let acc = "rgb(204, 255, 204)"; //Green
-let data = "rgb(204, 255, 204)"; //Green
-let general = "rgb(204, 255, 204)"; //Green
-let legal = "rgb(204, 255, 204)"; //Green
-let music = "rgb(204, 255, 204)"; //Green
-let IBMath = "rgb(204, 255, 204)"; //Green
-let IBMusic = "rgb(204, 255, 204)"; //Green
-let IBcomputer = "rgb(204, 255, 204)"; //Green
-
-//Any new colours must be added into the dictionaries WITH THE SAME KEY (the key is arbitrary)
-//Add a keyword into "subjects" which appears in the name of the subject
-const subjects = { methods: "Methods", english: "English", specialist: "Specialist", physics: "Physics", homeroom: "Homeroom",
-                  softwaredev: "Software", economics: "Economics", systems: "Systems", accounting: "Accounting", data: "Data",
-                  legal: "Legal", general: "General", anal:"Anal", music:"Music", IBcomp:"computer"};
-//Add the name of the variable used for colour
-const colours = { methods: meth, english: eng, specialist: spec, physics: phys, homeroom: HR, softwaredev: soft, economics: eco,
-                 systems: sys, accounting: acc, data: data, legal: legal, general: general, anal:IBMath, music:IBMusic, IBcomp:IBcomputer};
-*/
 
 //Cheeky global variable for searches later
 let parent = false;
@@ -178,58 +146,30 @@ function Save(){
     GM.setValue("Sub7Colour",document.getElementById("Sub7").value);
     window.location.href = "https://link.stleonards.vic.edu.au/timetable";
 }
+function RemoveNotifs(){
+    if(gradeNotifs == false){
+        let sidebar = document.getElementById("message-list");
+        let notifContainer = sidebar.getElementsByTagName("li")[2];
+        let notifList = notifContainer.getElementsByTagName("li");
+        for(let i=0;i<notifList.length;i++){
+            if(notifList[i].innerHTML.search("mark") != -1){
+                notifList[i].remove();
+                i--;
+            }
+        }
+    }
+}
 
 
 window.onload = function() {
     let body = document.getElementsByTagName("body")[0];
-    /*let audio = document.createElement("audio");
-    //let video = document.createElement("video");
-    //video.controls = true;
-    //video.autoplay = true;
-    audio.autoplay = true;
-    audio.loop = true;
-    //video.setAttribute("name", "media");
-    //audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
-    //<audio type="audio/mp3"
-    audio.src="https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
-    audio.setAttribute("type", "audio/mp3");
-    //video.prepend(audio);
-    body.prepend(audio);
-    */
-
-
-
-    /*
-    let audio = document.createElement("embed");
-
-    audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
-
-    audio.setAttribute("autoplay","true");
-    audio.setAttribute("loop","true");
-    audio.setAttribute("muted","true");
-
-    audio.height = 200;
-    audio.width = 200;
-
-    body.prepend(audio);
-    */
+    
     if(window.location.href.search("github.io/colours")==-1){
         try{
             var searchBar = document.getElementById("search");
             searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
         } catch{}
-        if(gradeNotifs == false){
-            let sidebar = document.getElementById("message-list");
-            let notifContainer = sidebar.getElementsByTagName("li")[2];
-            let notifList = notifContainer.getElementsByTagName("li");
-
-            for(let i=0;i<notifList.length;i++){
-                if(notifList[i].innerHTML.search("mark") != -1){
-                    notifList[i].remove();
-                    i--;
-                }
-            }
-        }
+        setTimeout(RemoveNotifs, 1500);
         let tempMenu = document.getElementById("top-menu");
         let tempSpan = document.createElement("span");
         let tempA = document.createElement("a");
@@ -280,45 +220,41 @@ window.onload = function() {
             let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
             let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
             let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
+            let SubjDict = await GM.getValue("SubjDict",-1);
+            let ColourDict = await GM.getValue("ColourDict",-1);
             colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
-            let subjDict = {};
-            let colourDict = {};
+            
             //console.log(colourList);
             //Assigning colours
             let j=0
-            for(let i = 0;i<classes.length;i++){
-                if(subjDict[classes[i].innerHTML] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
-                    subjDict[classes[i].innerHTML] = classes[i].innerHTML;
-                    colourDict[classes[i].innerHTML] = colourList[j];
-                    j++;
-                }
-            }
-            for(let i = 0;i<classes.length;i++){
-                //for (const property in subjDict) {
-                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                    if((classes[i].innerHTML) == `${subjDict[classes[i].innerHTML]}` && (classes[i].innerHTML).search("Private Study") == -1){
-                        classes[i].style.backgroundColor = `${colourDict[classes[i].innerHTML]}`;
-                        console.log("weuyfgv");
-                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                        //Removes private study
-                        classes[i].innerHTML="";
-                        classes[i].style.backgroundColor="#FFFFFF";
+            if(SubjDict!=-1){
+                let subjDict = {};
+                let colourDict = {};
+                for(let i = 0;i<classes.length;i++){
+                    if(subjDict[(classes[i].innerHTML).split('"')[1]] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
+                        subjDict[(classes[i].innerHTML).split('"')[1]] = classes[i].innerHTML.split('"')[1].trim();
+                        colourDict[(classes[i].innerHTML).split('"')[1]] = colourList[j];
+                        j++;
                     }
-                //}
+                }
+                GM.setValue("SubjDict",subjDict);
+                GM.setValue("ColourDict",colourDict);
+                SubjDict = subjDict;
+                ColourDict = colourDict;
             }
 
-        })();/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-            /*for (const property in subjects) {
+            for(let i = 0;i<classes.length;i++){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                if((classes[i].innerHTML).search(`${subjects[property]}`) != -1 && (classes[i].innerHTML).search("Private Study") == -1){
-                    classes[i].style.backgroundColor = `${colours[property]}`;
+                if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                    classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
                 } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
                     //Removes private study
-                    classes[i].remove();
+                    classes[i].innerHTML="";
+                    classes[i].style.backgroundColor="#FFFFFF";
                 }
-            }*/
+            }
+
+        })();
 
 
     //Home page
@@ -336,7 +272,9 @@ window.onload = function() {
             divs = yes[i].getElementsByTagName("div");
             if(divs[0].className == "timetable-subject-active"){
                 a= yes[i-1].getElementsByTagName("div");
-                a[0].classList.add("timetable-subject-active");
+                if(a[0].innerHTML.search("Homeroom")==-1){
+                    a[0].classList.add("timetable-subject-active");
+                }
             }
         }
 
@@ -357,31 +295,41 @@ window.onload = function() {
         periods[3].remove();
         periods[5].remove();
 
-        //Assigning colours
-        console.log(yes.length);
-        for(let i = 1;i<yes.length;i++){
-            console.log(i);
-            let tempDivs = yes[i].getElementsByTagName("div")[1];
-            console.log(tempDivs);
-            for (const property in subjects) {
-                if((tempDivs.innerHTML).search(`${subjects[property]}`) != -1 && (tempDivs.innerHTML).search("Private Study") == -1){
-                    tempDivs.style.backgroundColor = `${colours[property]}`;
-                } else if((yes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                    yes[i].innerHTML = "";
-                }
-            }
-        }
+        let classes = document.getElementsByClassName("timetable-subject");
 
-        //Reassign location of active box from period b to a
-        for(let j = 15; j<25;j++){
-            divs = yes[j].getElementsByTagName("div");
-            if(divs[0].className == "timetable-subject-active"){
-                if(divs[0].innerHTML.search("Period 1A") != -1 && divs[0].innerHTML.search("Period 4A") != -1 && divs[0].innerHTML.search("Period X") != -1 && divs[0].innerHTML.search("After school 2") != -1){
-                    a= yes[j-1].getElementsByTagName("div");
-                    a[0].classList.add("timetable-subject-active");
-                }
+        (async () => {
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
+            let SubjDict = await GM.getValue("SubjDict",-1);
+            let ColourDict = await GM.getValue("ColourDict",-1);
+            let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
+            let subjDict = {};
+            let colourDict = {};
+            //console.log(colourList);
+            //Assigning colours
+
+            for(let i = 0;i<classes.length;i++){
+                //for (const property in subjDict) {
+                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                    console.log(classes[i].innerHTML.split('"')[1]);
+                    console.log(SubjDict[classes[i].innerHTML.split('"')[1]]);
+                    if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                    console.log("WIRUBVIWUHV");
+                        classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
+                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                        //Removes private study
+                        classes[i].innerHTML="";
+                        classes[i].style.backgroundColor="#FFFFFF";
+                    }
+                //}
             }
-        }
+
+        })();
 
         //Cocurricular
         periods[16].remove();
@@ -426,13 +374,13 @@ window.onload = function() {
     } else if(window.location.href.search("github.io/colours")!=-1){
 
         (async () => {
-            let Sub1Colour = await GM.getValue("Sub1Colour", "#ffffff");
-            let Sub2Colour = await GM.getValue("Sub2Colour", "#ffffff");
-            let Sub3Colour = await GM.getValue("Sub3Colour", "#ffffff");
-            let Sub4Colour = await GM.getValue("Sub4Colour", "#ffffff");
-            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffffff");
-            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffffff");
-            let Sub7Colour = await GM.getValue("Sub7Colour", "#ffffff");
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
 
             document.getElementById("Sub1").value = Sub1Colour;
             document.getElementById("Sub2").value = Sub2Colour;
