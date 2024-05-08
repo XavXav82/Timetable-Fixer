@@ -227,7 +227,7 @@ window.onload = function() {
             //console.log(colourList);
             //Assigning colours
             let j=0
-            if(SubjDict!=-1){
+            if(SubjDict==-1){
                 let subjDict = {};
                 let colourDict = {};
                 for(let i = 0;i<classes.length;i++){
