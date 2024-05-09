@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable fixer
+// @name        Timetable fixerqqqqqqqqqqqqq
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.2
+// @version     1.8.3
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -162,38 +162,6 @@ function RemoveNotifs(){
 
 
 window.onload = function() {
-    let body = document.getElementsByTagName("body")[0];
-    /*let audio = document.createElement("audio");
-    //let video = document.createElement("video");
-    //video.controls = true;
-    //video.autoplay = true;
-    audio.autoplay = true;
-    audio.loop = true;
-    //video.setAttribute("name", "media");
-    //audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
-    //<audio type="audio/mp3"
-    audio.src="https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
-    audio.setAttribute("type", "audio/mp3");
-    //video.prepend(audio);
-    body.prepend(audio);
-    */
-
-
-
-    /*
-    let audio = document.createElement("embed");
-
-    audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
-
-    audio.setAttribute("autoplay","true");
-    audio.setAttribute("loop","true");
-    audio.setAttribute("muted","true");
-
-    audio.height = 200;
-    audio.width = 200;
-
-    body.prepend(audio);
-    */
     if(window.location.href.search("github.io/colours")==-1){
         try{
             var searchBar = document.getElementById("search");
@@ -241,7 +209,7 @@ window.onload = function() {
 
         let classes = document.getElementsByClassName("timetable-subject");
         let colourList = [];
-        //
+
         (async () => {
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
@@ -250,33 +218,27 @@ window.onload = function() {
             let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
             let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
             let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
-            let SubjDict = await GM.getValue("SubjDict",-1);
-            let ColourDict = await GM.getValue("ColourDict",-1);
             colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
             
-            //console.log(colourList);
             //Assigning colours
             let j=0
-            if(SubjDict==-1){
-                let subjDict = {};
-                let colourDict = {};
-                for(let i = 0;i<classes.length;i++){
-                    if(subjDict[(classes[i].innerHTML).split('"')[1]] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
-                        subjDict[(classes[i].innerHTML).split('"')[1]] = classes[i].innerHTML.split('"')[1].trim();
-                        colourDict[(classes[i].innerHTML).split('"')[1]] = colourList[j];
-                        j++;
-                    }
+            
+            let subjDict = {};
+            let colourDict = {};
+            for(let i = 0;i<classes.length;i++){
+                if(subjDict[(classes[i].innerHTML).split('"')[1]] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
+                    subjDict[(classes[i].innerHTML).split('"')[1]] = classes[i].innerHTML.split('"')[1].trim();
+                    colourDict[(classes[i].innerHTML).split('"')[1]] = colourList[j];
+                    j++;
                 }
-                GM.setValue("SubjDict",subjDict);
-                GM.setValue("ColourDict",colourDict);
-                SubjDict = subjDict;
-                ColourDict = colourDict;
             }
+            GM.setValue("SubjDict",subjDict);
+            GM.setValue("ColourDict",colourDict);
 
             for(let i = 0;i<classes.length;i++){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
-                    classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
+                if((classes[i].innerHTML.split('"')[1]) == `${subjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                    classes[i].style.backgroundColor = `${colourDict[classes[i].innerHTML.split('"')[1]]}`;
                 } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
                     //Removes private study
                     classes[i].innerHTML="";
