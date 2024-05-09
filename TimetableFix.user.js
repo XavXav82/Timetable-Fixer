@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.1
+// @version     1.8.2
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -257,7 +257,7 @@ window.onload = function() {
             //console.log(colourList);
             //Assigning colours
             let j=0
-            if(SubjDict!=-1){
+            if(SubjDict==-1){
                 let subjDict = {};
                 let colourDict = {};
                 for(let i = 0;i<classes.length;i++){
