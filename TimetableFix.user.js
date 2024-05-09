@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable fixerqqqqqqqqqqqqq
+// @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.0
+// @version     1.8.1
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -163,7 +163,37 @@ function RemoveNotifs(){
 
 window.onload = function() {
     let body = document.getElementsByTagName("body")[0];
-    
+    /*let audio = document.createElement("audio");
+    //let video = document.createElement("video");
+    //video.controls = true;
+    //video.autoplay = true;
+    audio.autoplay = true;
+    audio.loop = true;
+    //video.setAttribute("name", "media");
+    //audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
+    //<audio type="audio/mp3"
+    audio.src="https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
+    audio.setAttribute("type", "audio/mp3");
+    //video.prepend(audio);
+    body.prepend(audio);
+    */
+
+
+
+    /*
+    let audio = document.createElement("embed");
+
+    audio.src = "https://xavxav82.github.io/stljson.github.io/soviet-anthem.mp3";
+
+    audio.setAttribute("autoplay","true");
+    audio.setAttribute("loop","true");
+    audio.setAttribute("muted","true");
+
+    audio.height = 200;
+    audio.width = 200;
+
+    body.prepend(audio);
+    */
     if(window.location.href.search("github.io/colours")==-1){
         try{
             var searchBar = document.getElementById("search");
@@ -227,7 +257,7 @@ window.onload = function() {
             //console.log(colourList);
             //Assigning colours
             let j=0
-            if(SubjDict==-1){
+            if(SubjDict!=-1){
                 let subjDict = {};
                 let colourDict = {};
                 for(let i = 0;i<classes.length;i++){
