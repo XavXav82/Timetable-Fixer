@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable fixerqqqqqqqqqqqqq
+// @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.3
+// @version     1.8.4
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -102,7 +102,6 @@ function searchList(){
 }
 
 function createFilters(filterList){
-    //document.createElement("");
     let label = document.createElement("label");
     let checkBox = document.createElement("input");
     let firstDiv = document.createElement("div");
@@ -162,26 +161,55 @@ function RemoveNotifs(){
 
 
 window.onload = function() {
-    if(window.location.href.search("github.io/colours")==-1){
-        try{
-            var searchBar = document.getElementById("search");
-            searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
-        } catch{}
-        setTimeout(RemoveNotifs, 1500);
-        let tempMenu = document.getElementById("top-menu");
-        let tempSpan = document.createElement("span");
-        let tempA = document.createElement("a");
-        let tempLi = document.createElement("li");
+    let body = document.getElementsByTagName("body")[0];
+    
+    (async () => {
+        let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+        let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+        let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+        let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+        let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+        let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+        let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
 
-        tempSpan.innerHTML = "Colours";
-        tempA.href = "https://xavxav82.github.io/stljson.github.io/colours";
-        tempA.title = "Change your timetable's colours!";
-        tempLi.style.display = "list-item";
+        document.getElementById("Sub1").value = Sub1Colour;
+        document.getElementById("Sub2").value = Sub2Colour;
+        document.getElementById("Sub3").value = Sub3Colour;
+        document.getElementById("Sub4").value = Sub4Colour;
+        document.getElementById("Sub5").value = Sub5Colour;
+        document.getElementById("study").value = Sub6Colour;
+        document.getElementById("Sub7").value = Sub7Colour;
 
-        tempA.appendChild(tempSpan);
-        tempLi.appendChild(tempA);
-        tempMenu.appendChild(tempLi);
-    }
+    })();
+    try{
+        var searchBar = document.getElementById("search");
+        searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
+    } catch{}
+    setTimeout(RemoveNotifs, 1500);
+    let tempMenu = document.getElementById("top-menu");
+    let tempSpan = document.createElement("span");
+    let tempA = document.createElement("a");
+    let tempLi = document.createElement("li");
+
+    tempSpan.innerHTML = "Colours";
+    tempA.href = "https://xavxav82.github.io/stljson.github.io/colours";
+    tempA.title = "Change your timetable's colours!";
+    tempLi.style.display = "list-item";
+
+    tempA.appendChild(tempSpan);
+    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /><label for="Sub1">Sub1</label></div><div class="Sub2"><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /><label for="Sub2">Sub2</label></div><div class="Sub3"><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /><label for="Sub3">Sub3</label></div><div class="Sub4"><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /><label for="Sub4">Sub4</label></div><div class="Sub5"><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /><label for="Sub5">Sub5</label></div><div class="Sub6"><input type="color" id="study" name="study" value="#f6b73c" /><label for="study">Private study</label></div><div class="Sub7"><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /><label for="Sub7">Homeroom</label></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
+
+    tempLi.style.position="relative";
+    tempLi.style.zIndex="999";
+
+    tempMenu.appendChild(tempLi);
+
+    let butt = document.getElementById("button11");
+    butt.addEventListener("click", Save);
+
+    let style = document.createElement('style');
+    style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 35px;}';
+    document.head.append(style);
 
     //Timetable page
     if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
@@ -308,10 +336,9 @@ window.onload = function() {
             for(let i = 0;i<classes.length;i++){
                 //for (const property in subjDict) {
                     //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                    console.log(classes[i].innerHTML.split('"')[1]);
-                    console.log(SubjDict[classes[i].innerHTML.split('"')[1]]);
+                    
                     if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
-                    console.log("WIRUBVIWUHV");
+                    
                         classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
                     } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
                         //Removes private study
@@ -362,30 +389,6 @@ window.onload = function() {
 
         //runs the searchlist function after 2.5 secs because it need to load first
         setTimeout(searchList, 1500);
-
-    } else if(window.location.href.search("github.io/colours")!=-1){
-
-        (async () => {
-            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
-            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
-            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
-            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
-            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
-            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
-            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
-
-            document.getElementById("Sub1").value = Sub1Colour;
-            document.getElementById("Sub2").value = Sub2Colour;
-            document.getElementById("Sub3").value = Sub3Colour;
-            document.getElementById("Sub4").value = Sub4Colour;
-            document.getElementById("Sub5").value = Sub5Colour;
-            document.getElementById("study").value = Sub6Colour;
-            document.getElementById("Sub7").value = Sub7Colour;
-
-        })();
-
-        let button = document.getElementById("button");
-        button.addEventListener("click", Save);
 
     }
 };
