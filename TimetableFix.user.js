@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.4
+// @version     1.8.5
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -162,7 +162,6 @@ function RemoveNotifs(){
 
 window.onload = function() {
     let body = document.getElementsByTagName("body")[0];
-    
     (async () => {
         let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
         let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
@@ -197,7 +196,8 @@ window.onload = function() {
     tempLi.style.display = "list-item";
 
     tempA.appendChild(tempSpan);
-    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /><label for="Sub1">Sub1</label></div><div class="Sub2"><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /><label for="Sub2">Sub2</label></div><div class="Sub3"><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /><label for="Sub3">Sub3</label></div><div class="Sub4"><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /><label for="Sub4">Sub4</label></div><div class="Sub5"><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /><label for="Sub5">Sub5</label></div><div class="Sub6"><input type="color" id="study" name="study" value="#f6b73c" /><label for="study">Private study</label></div><div class="Sub7"><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /><label for="Sub7">Homeroom</label></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
+    //tempLi.appendChild(tempA);
+    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Private study</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Homeroom</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
 
     tempLi.style.position="relative";
     tempLi.style.zIndex="999";
@@ -210,7 +210,7 @@ window.onload = function() {
     let style = document.createElement('style');
     style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 35px;}';
     document.head.append(style);
-
+  
     //Timetable page
     if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
         //Headings
@@ -334,9 +334,6 @@ window.onload = function() {
             //Assigning colours
 
             for(let i = 0;i<classes.length;i++){
-                //for (const property in subjDict) {
-                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                    
                     if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
                     
                         classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
@@ -345,7 +342,6 @@ window.onload = function() {
                         classes[i].innerHTML="";
                         classes[i].style.backgroundColor="#FFFFFF";
                     }
-                //}
             }
 
         })();
@@ -373,8 +369,6 @@ window.onload = function() {
 
         let searchField = document.getElementById("search-field");
         searchField.innerHTML = ("bruh")
-        //let em = document.getElementsByTagName("em");
-        //em[0].remove();
         const queryString = window.location.search;
         let tempParam = (queryString.split("keyword="))[1];
         let tempParams = (tempParam.split("&filter="))[0];
