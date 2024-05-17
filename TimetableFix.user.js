@@ -199,7 +199,7 @@ window.onload = function() {
 
     tempA.appendChild(tempSpan);
     //tempLi.appendChild(tempA);
-    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /><label for="Sub1">Sub1</label></div><div class="Sub2"><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /><label for="Sub2">Sub2</label></div><div class="Sub3"><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /><label for="Sub3">Sub3</label></div><div class="Sub4"><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /><label for="Sub4">Sub4</label></div><div class="Sub5"><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /><label for="Sub5">Sub5</label></div><div class="Sub6"><input type="color" id="study" name="study" value="#f6b73c" /><label for="study">Private study</label></div><div class="Sub7"><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /><label for="Sub7">Homeroom</label></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
+    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:72px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Homeroom</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
 
     tempLi.style.position="relative";
     tempLi.style.zIndex="999";
@@ -303,7 +303,9 @@ window.onload = function() {
             divs = yes[i].getElementsByTagName("div");
             if(divs[0].className == "timetable-subject-active"){
                 a= yes[i-1].getElementsByTagName("div");
-                a[0].classList.add("timetable-subject-active");
+                if(a[0].innerHTML.search("Homeroom")==-1){
+                    a[0].classList.add("timetable-subject-active");
+                }
             }
         }
 
@@ -324,28 +326,40 @@ window.onload = function() {
         periods[3].remove();
         periods[5].remove();
 
-        //Assigning colours
-        for(let i = 0;i<yes.length;i++){
-            let tempDivs = yes[i].getElementsByTagName("div")[1];
-            for (const property in subjects) {
-                if((tempDivs.innerHTML).search(`${subjects[property]}`) != -1 && (tempDivs.innerHTML).search("Private Study") == -1){
-                    tempDivs.style.backgroundColor = `${colours[property]}`;
-                } else if((yes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                    yes[i].innerHTML = "";
-                }
-            }
-        }
+        let classes = document.getElementsByClassName("timetable-subject");
 
-        //Reassign location of active box from period b to a
-        for(let j = 15; j<25;j++){
-            divs = yes[j].getElementsByTagName("div");
-            if(divs[0].className == "timetable-subject-active"){
-                if(divs[0].innerHTML.search("Period 1A") != -1 && divs[0].innerHTML.search("Period 4A") != -1 && divs[0].innerHTML.search("Period X") != -1 && divs[0].innerHTML.search("After school 2") != -1){
-                    a= yes[j-1].getElementsByTagName("div");
-                    a[0].classList.add("timetable-subject-active");
-                }
+        (async () => {
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
+            let SubjDict = await GM.getValue("SubjDict",-1);
+            let ColourDict = await GM.getValue("ColourDict",-1);
+            let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
+            let subjDict = {};
+            let colourDict = {};
+            //console.log(colourList);
+            //Assigning colours
+
+            for(let i = 0;i<classes.length;i++){
+                //for (const property in subjDict) {
+                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+
+                    if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+
+                        classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
+                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                        //Removes private study
+                        classes[i].innerHTML="";
+                        classes[i].style.backgroundColor="#FFFFFF";
+                    }
+                //}
             }
-        }
+
+        })();
 
         //Cocurricular
         periods[16].remove();
