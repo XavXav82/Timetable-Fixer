@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable fixer
+// @name        Timetable fixerqqqqqqqqqqqqq
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.5
+// @version     1.8.6
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -159,6 +159,40 @@ function RemoveNotifs(){
     }
 }
 
+function Calendar(){
+    let classes = document.getElementsByClassName("fc-daygrid-event-harness");
+
+        (async () => {
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
+            let SubjDict = await GM.getValue("SubjDict",-1);
+            let ColourDict = await GM.getValue("ColourDict",-1);
+            let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
+            let subjDict = {};
+            let colourDict = {};
+            //console.log(colourList);
+            //Assigning colours
+
+            for(let i = 0;i<classes.length;i++){
+                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                let theA = classes[i].getElementsByTagName("a")[0];
+                let theSpan = classes[i].getElementsByTagName("span")[0];
+                if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+
+                    theA.style.backgroundColor = `${ColourDict[theSpan.innerHTML.split(" (")[0]]}`;
+                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                    //Removes private study
+                    classes[i].innerHTML="";
+                }
+            }
+
+        })();
+}
 
 window.onload = function() {
     let body = document.getElementsByTagName("body")[0];
@@ -196,8 +230,7 @@ window.onload = function() {
     tempLi.style.display = "list-item";
 
     tempA.appendChild(tempSpan);
-    //tempLi.appendChild(tempA);
-    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Private study</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Homeroom</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
+    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:72px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Homeroom</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
 
     tempLi.style.position="relative";
     tempLi.style.zIndex="999";
@@ -208,9 +241,9 @@ window.onload = function() {
     butt.addEventListener("click", Save);
 
     let style = document.createElement('style');
-    style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 35px;}';
+    style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block; /*height:175px; width:80px;*/}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 36px;}';
     document.head.append(style);
-  
+
     //Timetable page
     if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
         //Headings
@@ -247,30 +280,38 @@ window.onload = function() {
             let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
             let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
             colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
-            
+
             //Assigning colours
             let j=0
-            
+
             let subjDict = {};
             let colourDict = {};
             for(let i = 0;i<classes.length;i++){
-                if(subjDict[(classes[i].innerHTML).split('"')[1]] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
-                    subjDict[(classes[i].innerHTML).split('"')[1]] = classes[i].innerHTML.split('"')[1].trim();
-                    colourDict[(classes[i].innerHTML).split('"')[1]] = colourList[j];
-                    j++;
+                let theA = classes[i].getElementsByTagName("a")[0];
+
+                if (theA != undefined){
+                    if(subjDict[(theA.innerHTML)] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
+                        subjDict[(theA.innerHTML)] = theA.innerHTML;
+                        colourDict[(theA.innerHTML)] = colourList[j];
+                        j++;
+                    }
                 }
             }
             GM.setValue("SubjDict",subjDict);
             GM.setValue("ColourDict",colourDict);
 
             for(let i = 0;i<classes.length;i++){
-                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                if((classes[i].innerHTML.split('"')[1]) == `${subjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
-                    classes[i].style.backgroundColor = `${colourDict[classes[i].innerHTML.split('"')[1]]}`;
-                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                    //Removes private study
-                    classes[i].innerHTML="";
-                    classes[i].style.backgroundColor="#FFFFFF";
+                let theA = classes[i].getElementsByTagName("a")[0];
+                if(theA != undefined){
+                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                    if((theA.innerHTML) == `${subjDict[theA.innerHTML]}` && (theA.innerHTML).search("Private Study") == -1){
+                        classes[i].style.backgroundColor = `${colourDict[theA.innerHTML]}`;
+
+                    } else if((theA.innerHTML).search("Private Study") != -1 && removePS == true){
+                        //Removes private study
+                        classes[i].innerHTML="";
+                        classes[i].style.backgroundColor="#FFFFFF";
+                    }
                 }
             }
 
@@ -330,18 +371,19 @@ window.onload = function() {
             let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
             let subjDict = {};
             let colourDict = {};
-            //console.log(colourList);
+            
             //Assigning colours
-
             for(let i = 0;i<classes.length;i++){
-                    if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
-                    
-                        classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
-                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                        //Removes private study
-                        classes[i].innerHTML="";
-                        classes[i].style.backgroundColor="#FFFFFF";
-                    }
+                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                let theA = classes[i].getElementsByTagName("a")[0];
+                if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}` && (classes[i].innerHTML).search("Private Study") == -1){
+
+                    classes[i].style.backgroundColor = `${ColourDict[theA.innerHTML]}`;
+                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                    //Removes private study
+                    classes[i].innerHTML="";
+                    classes[i].style.backgroundColor="#FFFFFF";
+                }
             }
 
         })();
@@ -362,6 +404,8 @@ window.onload = function() {
         rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
         rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
+    }else if(window.location.href.search("calendar")!=-1){
+        setTimeout(Calendar, 3000);
     }else if(window.location.href.search("search")!=-1){
         let filterList = document.getElementsByClassName("option-list")[0];
         let temp = document.createElement("div");
