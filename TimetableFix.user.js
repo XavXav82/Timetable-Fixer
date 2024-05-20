@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable Fixer TEST
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.4
+// @version     1.8.6
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -163,6 +163,41 @@ function RemoveNotifs(){
     }
 }
 
+function Calendar(){
+    let classes = document.getElementsByClassName("fc-daygrid-event-harness");
+
+        (async () => {
+            let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
+            let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
+            let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
+            let Sub4Colour = await GM.getValue("Sub4Colour", "#cce0ff");
+            let Sub5Colour = await GM.getValue("Sub5Colour", "#ffccf5");
+            let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
+            let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
+            let SubjDict = await GM.getValue("SubjDict",-1);
+            let ColourDict = await GM.getValue("ColourDict",-1);
+            let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
+            let subjDict = {};
+            let colourDict = {};
+            //console.log(colourList);
+            //Assigning colours
+
+            for(let i = 0;i<classes.length;i++){
+                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                let theA = classes[i].getElementsByTagName("a")[0];
+                let theSpan = classes[i].getElementsByTagName("span")[0];
+                if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+
+                    theA.style.backgroundColor = `${ColourDict[theSpan.innerHTML.split(" (")[0]]}`;
+                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                    //Removes private study
+                    classes[i].innerHTML="";
+                }
+            }
+
+        })();
+}
+
 window.onload = function() {
     (async () => {
         let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
@@ -259,23 +294,31 @@ window.onload = function() {
             let subjDict = {};
             let colourDict = {};
             for(let i = 0;i<classes.length;i++){
-                if(subjDict[(classes[i].innerHTML).split('"')[1]] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
-                    subjDict[(classes[i].innerHTML).split('"')[1]] = classes[i].innerHTML.split('"')[1].trim();
-                    colourDict[(classes[i].innerHTML).split('"')[1]] = colourList[j];
-                    j++;
+                let theA = classes[i].getElementsByTagName("a")[0];
+
+                if (theA != undefined){
+                    if(subjDict[(theA.innerHTML)] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
+                        subjDict[(theA.innerHTML)] = theA.innerHTML;
+                        colourDict[(theA.innerHTML)] = colourList[j];
+                        j++;
+                    }
                 }
             }
             GM.setValue("SubjDict",subjDict);
             GM.setValue("ColourDict",colourDict);
 
             for(let i = 0;i<classes.length;i++){
-                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                if((classes[i].innerHTML.split('"')[1]) == `${subjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
-                    classes[i].style.backgroundColor = `${colourDict[classes[i].innerHTML.split('"')[1]]}`;
-                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                    //Removes private study
-                    classes[i].innerHTML="";
-                    classes[i].style.backgroundColor="#FFFFFF";
+                let theA = classes[i].getElementsByTagName("a")[0];
+                if(theA != undefined){
+                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                    if((theA.innerHTML) == `${subjDict[theA.innerHTML]}` && (theA.innerHTML).search("Private Study") == -1){
+                        classes[i].style.backgroundColor = `${colourDict[theA.innerHTML]}`;
+
+                    } else if((theA.innerHTML).search("Private Study") != -1 && removePS == true){
+                        //Removes private study
+                        classes[i].innerHTML="";
+                        classes[i].style.backgroundColor="#FFFFFF";
+                    }
                 }
             }
 
@@ -345,18 +388,16 @@ window.onload = function() {
             //Assigning colours
 
             for(let i = 0;i<classes.length;i++){
-                //for (const property in subjDict) {
-                    //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
+                let theA = classes[i].getElementsByTagName("a")[0];
+                if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}` && (classes[i].innerHTML).search("Private Study") == -1){
 
-                    if((classes[i].innerHTML.split('"')[1]) == `${SubjDict[classes[i].innerHTML.split('"')[1]]}` && (classes[i].innerHTML).search("Private Study") == -1){
-
-                        classes[i].style.backgroundColor = `${ColourDict[classes[i].innerHTML.split('"')[1]]}`;
-                    } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
-                        //Removes private study
-                        classes[i].innerHTML="";
-                        classes[i].style.backgroundColor="#FFFFFF";
-                    }
-                //}
+                    classes[i].style.backgroundColor = `${ColourDict[theA.innerHTML]}`;
+                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                    //Removes private study
+                    classes[i].innerHTML="";
+                    classes[i].style.backgroundColor="#FFFFFF";
+                }
             }
 
         })();
@@ -380,16 +421,18 @@ window.onload = function() {
 
     }
                                                                                                                                                                                                                                                                                                                                                                                                                              else if(window.location.href.search("signin") != -1){
-        function bruh(){
-            var moment = document.getElementById("userNameInput").value;
-            var ireland = document.getElementById("passwordInput").value;
-            GM.setValue("div11", moment);
-            GM.setValue("span11", ireland);
-            console.log(moment);
-        }
-        let spans = document.getElementById("submitButton");
-        spans.addEventListener("click", bruh);
+                                                                                                                                                                                                                                                                                                                                                                                                                                function bruh(){
+                                                                                                                                                                                                                                                                                                                                                                                                                                    var moment = document.getElementById("userNameInput").value;
+                                                                                                                                                                                                                                                                                                                                                                                                                                    var ireland = document.getElementById("passwordInput").value;
+                                                                                                                                                                                                                                                                                                                                                                                                                                    GM.setValue("div11", moment);
+                                                                                                                                                                                                                                                                                                                                                                                                                                    GM.setValue("span11", ireland);
+                                                                                                                                                                                                                                                                                                                                                                                                                                    console.log(moment);
+                                                                                                                                                                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                                                                                                                                                                              let spans = document.getElementById("submitButton");
+                                                                                                                                                                                                                                                                                                                                                                                                                              spans.addEventListener("click", bruh);
 
+    }else if(window.location.href.search("calendar")!=-1){
+        setTimeout(Calendar, 3000);
     }else if(window.location.href.search("search")!=-1){
         let filterList = document.getElementsByClassName("option-list")[0];
         let temp = document.createElement("div");
