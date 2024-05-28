@@ -304,16 +304,12 @@ window.onload = function() {
                     if(subjDict[(theA.innerHTML)] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
                         subjDict[(theA.innerHTML)] = theA.innerHTML;
                         colourDict[(theA.innerHTML)] = colourList[j];
-                        console.log(j);
-                        console.log(colourList[j]);
                         j++;
                     }
                 }
             }
             GM.setValue("SubjDict",subjDict);
             GM.setValue("ColourDict",colourDict);
-            console.log(subjDict);
-            console.log(colourDict);
 
             for(let i = 0;i<classes.length;i++){
                 let theA = classes[i].getElementsByTagName("a")[0];
