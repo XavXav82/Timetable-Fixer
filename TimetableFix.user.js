@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.6
+// @version     1.8.7
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -17,7 +17,7 @@
 
 
 //Change this to remove private study, leaving the spot blank in its absense
-let removePS = true;
+let removePS = false;
 
 //Chenge this to have grade notifications present
 let gradeNotifs = false;
@@ -182,7 +182,7 @@ function Calendar(){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                 let theA = classes[i].getElementsByTagName("a")[0];
                 let theSpan = classes[i].getElementsByTagName("span")[0];
-                if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}`){
 
                     theA.style.backgroundColor = `${ColourDict[theSpan.innerHTML.split(" (")[0]]}`;
                 } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
@@ -299,12 +299,14 @@ window.onload = function() {
             }
             GM.setValue("SubjDict",subjDict);
             GM.setValue("ColourDict",colourDict);
+            console.log(subjDict);
+            console.log(colourDict);
 
             for(let i = 0;i<classes.length;i++){
                 let theA = classes[i].getElementsByTagName("a")[0];
                 if(theA != undefined){
                     //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                    if((theA.innerHTML) == `${subjDict[theA.innerHTML]}` && (theA.innerHTML).search("Private Study") == -1){
+                    if((theA.innerHTML) == `${subjDict[theA.innerHTML]}`){
                         classes[i].style.backgroundColor = `${colourDict[theA.innerHTML]}`;
 
                     } else if((theA.innerHTML).search("Private Study") != -1 && removePS == true){
@@ -371,12 +373,12 @@ window.onload = function() {
             let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
             let subjDict = {};
             let colourDict = {};
-            
+
             //Assigning colours
             for(let i = 0;i<classes.length;i++){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                 let theA = classes[i].getElementsByTagName("a")[0];
-                if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}`){
 
                     classes[i].style.backgroundColor = `${ColourDict[theA.innerHTML]}`;
                 } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
