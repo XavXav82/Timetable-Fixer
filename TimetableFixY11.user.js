@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer - Y11
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.6
+// @version     1.8.7
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -185,7 +185,7 @@ function Calendar(){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                 let theA = classes[i].getElementsByTagName("a")[0];
                 let theSpan = classes[i].getElementsByTagName("span")[0];
-                if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}`){
 
                     theA.style.backgroundColor = `${ColourDict[theSpan.innerHTML.split(" (")[0]]}`;
                 } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
@@ -239,7 +239,7 @@ window.onload = function() {
     tempLi.style.display = "list-item";
 
     tempA.appendChild(tempSpan);
-    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:7px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Sub7</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div class="Sub8"><label for="Sub8">Sub8</label><input type="color" id="Sub8" name="Sub8" value="#f6b73c" /></div><div class="Sub9"><label for="Sub9">Sub9</label><input type="color" id="Sub9" name="Sub9" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
+    tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:72px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Sub7</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div class="Sub8"><label for="Sub8">Sub8</label><input type="color" id="Sub8" name="Sub8" value="#f6b73c" /></div><div class="Sub9"><label for="Sub9">Sub9</label><input type="color" id="Sub9" name="Sub9" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
 
     tempLi.style.position="relative";
     tempLi.style.zIndex="999";
@@ -315,7 +315,7 @@ window.onload = function() {
                 let theA = classes[i].getElementsByTagName("a")[0];
                 if(theA != undefined){
                     //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
-                    if((theA.innerHTML) == `${subjDict[theA.innerHTML]}` && (theA.innerHTML).search("Private Study") == -1){
+                    if((theA.innerHTML) == `${subjDict[theA.innerHTML]}`){
                         classes[i].style.backgroundColor = `${colourDict[theA.innerHTML]}`;
 
                     } else if((theA.innerHTML).search("Private Study") != -1 && removePS == true){
@@ -389,7 +389,7 @@ window.onload = function() {
             for(let i = 0;i<classes.length;i++){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                 let theA = classes[i].getElementsByTagName("a")[0];
-                if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}` && (classes[i].innerHTML).search("Private Study") == -1){
+                if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}`){
 
                     classes[i].style.backgroundColor = `${ColourDict[theA.innerHTML]}`;
                 } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
