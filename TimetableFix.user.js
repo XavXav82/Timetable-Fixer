@@ -203,7 +203,7 @@ function option(){
 }
 
 window.onload = function() {
-    (async () => {
+    try{(async () => {
         let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
         let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
         let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -220,13 +220,13 @@ window.onload = function() {
         document.getElementById("study").value = Sub6Colour;
         document.getElementById("Sub7").value = Sub7Colour;
 
-    })();
+    })();}catch{}
     try{
         var searchBar = document.getElementById("search");
         searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
     } catch{}
-    setTimeout(RemoveNotifs, 1500);
-    let tempMenu = document.getElementById("top-menu");
+    try{setTimeout(RemoveNotifs, 1500);}catch{}
+    try{let tempMenu = document.getElementById("top-menu");
     let tempSpan = document.createElement("span");
     let tempA = document.createElement("a");
     let tempLi = document.createElement("li");
@@ -256,8 +256,7 @@ window.onload = function() {
 
     let style = document.createElement('style');
     style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #1e3e76;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 36px;}.imeg2{  width: 33px;  height: 33px; top: 0px; vertical-align: sup;}';
-    document.head.append(style);
-
+    document.head.append(style);}catch{}
     //Timetable page
     if(window.location.href=="https://link.stleonards.vic.edu.au/timetable"){
 
