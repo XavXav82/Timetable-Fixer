@@ -401,7 +401,7 @@ window.onload = function() {
                 if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}`){
 
                     classes[i].style.backgroundColor = `${ColourDict[theA.innerHTML]}`;
-                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                } if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
                     //Removes private study
                     classes[i].innerHTML="";
                     classes[i].style.backgroundColor="#FFFFFF";
