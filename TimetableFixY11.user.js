@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer - Y11
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.8.7
+// @version     1.9
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -13,18 +13,8 @@
 // @run-at      document-start
 // ==/UserScript==
 
-
-
-//Change this to remove private study, leaving the spot blank in its absense
-let removePS = true;
-
-//Chenge this to have grade notifications present
-let gradeNotifs = false;
-
-//Cheeky global variable for searches later
-let parent = false;
-
 var nameList;
+
 function searchList(){
     //Delete all search results that are already there
     document.getElementsByClassName("l-flex-col")[22].innerHTML = "";
@@ -147,23 +137,29 @@ function Save(){
     window.location.href = "https://link.stleonards.vic.edu.au/timetable";
 }
 function RemoveNotifs(){
-    if(gradeNotifs == false){
-        let sidebar = document.getElementById("message-list");
-        let notifContainer = sidebar.getElementsByTagName("li")[2];
-        let notifList = notifContainer.getElementsByTagName("li");
-        for(let i=0;i<notifList.length;i++){
-            if(notifList[i].innerHTML.search("mark") != -1){
-                notifList[i].remove();
-                i--;
+    (async () => {
+        let gradeNotifs = await GM.getValue("notif", "false")
+        console.log(gradeNotifs);
+        if(gradeNotifs == true){
+            let sidebar = document.getElementById("message-list");
+            let notifContainer = sidebar.getElementsByTagName("li")[2];
+            let notifList = notifContainer.getElementsByTagName("li");
+            for(let i=0;i<notifList.length;i++){
+                if(notifList[i].innerHTML.search("mark") != -1){
+                    notifList[i].remove();
+                    i--;
+                }
             }
         }
-    }
+    })();
 }
 
 function Calendar(){
     let classes = document.getElementsByClassName("fc-daygrid-event-harness");
 
-        (async () => {
+    (async () => {
+        try{
+            let removePS = await GM.getValue("removePS", "false");
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -178,9 +174,8 @@ function Calendar(){
             let colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour,Sub8Colour,Sub9Colour]
             let subjDict = {};
             let colourDict = {};
-            //console.log(colourList);
-            //Assigning colours
 
+            //Assigning colours
             for(let i = 0;i<classes.length;i++){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                 let theA = classes[i].getElementsByTagName("a")[0];
@@ -193,8 +188,15 @@ function Calendar(){
                     classes[i].innerHTML="";
                 }
             }
+        }catch{}
+    })();
+}
 
-        })();
+function option(){
+    let but1 = document.getElementById("but1");
+    let but2 = document.getElementById("but2");
+    GM.setValue("removePS", but1.checked);
+    GM.setValue("notif", but2.checked);
 }
 
 window.onload = function() {
@@ -232,13 +234,11 @@ window.onload = function() {
     let tempSpan = document.createElement("span");
     let tempA = document.createElement("a");
     let tempLi = document.createElement("li");
+    let tempLi2 = document.createElement("li");
 
-    tempSpan.innerHTML = "Colours";
-    tempA.href = "https://xavxav82.github.io/stljson.github.io/colours";
-    tempA.title = "Change your timetable's colours!";
     tempLi.style.display = "list-item";
+    tempLi2.style.display = "list-item";
 
-    tempA.appendChild(tempSpan);
     tempLi.innerHTML = '<div style="position:absolute"class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:72px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Sub7</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div class="Sub8"><label for="Sub8">Sub8</label><input type="color" id="Sub8" name="Sub8" value="#f6b73c" /></div><div class="Sub9"><label for="Sub9">Sub9</label><input type="color" id="Sub9" name="Sub9" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
 
     tempLi.style.position="relative";
@@ -246,11 +246,17 @@ window.onload = function() {
 
     tempMenu.appendChild(tempLi);
 
+    tempLi2.innerHTML = '<a href="/options" style="padding:9px;"><img class="imeg2" src="https://xavxav82.github.io/stljson.github.io/cog3.png"><span>Options</span></a>';
+    tempLi2.style.position="relative";
+    tempLi2.style.left="80px";
+
+    tempMenu.appendChild(tempLi2);
+
     let butt = document.getElementById("button11");
     butt.addEventListener("click", Save);
 
     let style = document.createElement('style');
-    style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block; }.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #ddd;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 36px;}';
+    style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #1e3e76;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 36px;}.imeg2{  width: 33px;  height: 33px; top: 0px; vertical-align: sup;}';
     document.head.append(style);
 
     //Timetable page
@@ -281,6 +287,7 @@ window.onload = function() {
         let colourList = [];
 
         (async () => {
+            let removePS = await GM.getValue("removePS", "false");
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -318,7 +325,7 @@ window.onload = function() {
                     if((theA.innerHTML) == `${subjDict[theA.innerHTML]}`){
                         classes[i].style.backgroundColor = `${colourDict[theA.innerHTML]}`;
 
-                    } else if((theA.innerHTML).search("Private Study") != -1 && removePS == true){
+                    }if((theA.innerHTML).search("Private Study") != -1 && removePS == true){
                         //Removes private study
                         classes[i].innerHTML="";
                         classes[i].style.backgroundColor="#FFFFFF";
@@ -370,6 +377,7 @@ window.onload = function() {
         let classes = document.getElementsByClassName("timetable-subject");
 
         (async () => {
+            let removePS = await GM.getValue("removePS", "false");
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -392,7 +400,7 @@ window.onload = function() {
                 if((theA.innerHTML) == `${SubjDict[theA.innerHTML]}`){
 
                     classes[i].style.backgroundColor = `${ColourDict[theA.innerHTML]}`;
-                } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+                }if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
                     //Removes private study
                     classes[i].innerHTML="";
                     classes[i].style.backgroundColor="#FFFFFF";
@@ -419,6 +427,23 @@ window.onload = function() {
 
     }else if(window.location.href.search("calendar")!=-1){
         setTimeout(Calendar, 3000);
+    }else if(window.location.href.search("options")!=-1){
+        (async () => {
+            let body = document.getElementById("container");
+            body.innerHTML = '<h1>Options</h1><h3>Remove Private Study</h3><label class="switch"><input type="checkbox" id="but1"><span class="slider round"></span></label><h3>Remove Grade Notifications</h3><label class="switch"><input type="checkbox" id="but2"><span class="slider round"></span></label><br><br><button id="saveOpt" style="width:80px;">Save</button>';
+            let style = document.createElement("style");
+            style.textContent = '.switch {   position: relative;   display: inline-block;   width: 69px;   height: 39px; left:29px;}  .switch input {   opacity: 0;   width: 0;   height: 0; } .slider {   position: absolute;   cursor: pointer;   top: 0;   left: 0;   right: 0;   bottom: 0;   background-color: #ccc;   -webkit-transition: .4s;   transition: .4s; }  .slider:before {   position: absolute;   content: "";   height: 30px;   width: 30px;   left: 3px;   bottom: 3px;   background-color: white;   -webkit-transition: .4s;   transition: .4s; }  input:checked + .slider {   background-color: #2196F3; }  input:focus + .slider {   box-shadow: 0 0 1px #2196F3; }  input:checked + .slider:before {   -webkit-transform: translateX(26px);   -ms-transform: translateX(26px);   transform: translateX(26px); }  .slider.round {   border-radius: 34px; }  .slider.round:before {   border-radius: 50%; }';
+            document.head.append(style);
+            let title = document.getElementsByTagName("title")[0];
+            title.innerHTML = "Options";
+            let butt = document.getElementById("saveOpt");
+            butt.addEventListener("click",option);
+            let PSSwitch = document.getElementById("but1");
+            let notifSwitch = document.getElementById("but2");
+            PSSwitch.checked = await GM.getValue("removePS","false");
+            notifSwitch.checked = await GM.getValue("notif","false");
+        })();
+
     }else if(window.location.href.search("search")!=-1){
         let filterList = document.getElementsByClassName("option-list")[0];
         let temp = document.createElement("div");
@@ -434,11 +459,6 @@ window.onload = function() {
 
         nameList = tempParams.split("%2C");
         let finalParams = tempParams[1].split("&parent=");//0 is search query, 1 is parent variable
-
-        if(finalParams.length > 1){
-            //dont bother actually checking the param because it works like this (until i want to add another param)
-            parent = true
-        }
 
         //runs the searchlist function after 2.5 secs because it need to load first
         setTimeout(searchList, 1500);
