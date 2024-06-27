@@ -364,6 +364,7 @@ window.onload = function() {
 
         //Add the active box to the period preceeding the currently active one
         //If on an a period already its fine because it is put on a b period and it gets removed later
+        try{
         for(let i = 1; i<10;i++){
             divs = yes[i].getElementsByTagName("div");
             if(divs[0].className == "timetable-subject-active"){
@@ -372,7 +373,7 @@ window.onload = function() {
                     a[0].classList.add("timetable-subject-active");
                 }
             }
-        }
+        }}catch{}
 
         //Deleting period headders
         rows[1].remove();
