@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable fixer
+// @name        Timetable fixerqq
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.9.0
+// @version     1.9.1
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -175,6 +175,7 @@ function Calendar(){
         let subjDict = {};
         let colourDict = {};
 
+
         //Assigning colours
         for(let i = 0;i<classes.length;i++){
             //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
@@ -199,7 +200,48 @@ function option(){
     GM.setValue("notif", but2.checked);
 }
 
+
 window.onload = function() {
+
+    
+    try{
+        var searchBar = document.getElementById("search");
+        searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
+        setTimeout(RemoveNotifs, 1500);
+    } catch{}
+    try{
+        let tempMenu = document.getElementById("top-menu");
+        let tempSpan = document.createElement("span");
+        let tempA = document.createElement("a");
+        let tempLi = document.createElement("li");
+        let tempLi2 = document.createElement("li");
+
+        tempLi.style.display = "list-item";
+        tempLi2.style.display = "list-item";
+
+        tempLi.innerHTML = '<div style="position:absolute" class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:72px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label id="Sub1T" for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label id="Sub2T" for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label id="Sub3T" for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label id="Sub4T" for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label id="Sub5T" for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label id="Sub6T" for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label id="Sub7T" for="Sub7">Homeroom</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
+
+        tempLi.style.position="relative";
+        tempLi.style.zIndex="999";
+
+        tempMenu.appendChild(tempLi);
+
+        tempLi2.innerHTML = '<a href="/options" style="padding:9px;"><img class="imeg2" src="https://xavxav82.github.io/stljson.github.io/cog3.png"><span>Options</span></a>';
+        tempLi2.style.position="relative";
+        tempLi2.style.left="80px";
+
+        tempMenu.appendChild(tempLi2);
+
+        let butt = document.getElementById("button11");
+        butt.addEventListener("click", Save);
+
+
+
+
+        let style = document.createElement('style');
+        style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #1e3e76;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 36px;}.imeg2{  width: 33px;  height: 33px; top: 0px; vertical-align: sup;}';
+        document.head.append(style);
+    }catch{}
     (async () => {
         let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
         let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
@@ -209,6 +251,8 @@ window.onload = function() {
         let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
         let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
 
+        let classList = await GM.getValue("classList", ["Sub1", "Sub2", "Sub3", "Sub4", "Sub5", "Sub6", "Sub7"]);
+
         document.getElementById("Sub1").value = Sub1Colour;
         document.getElementById("Sub2").value = Sub2Colour;
         document.getElementById("Sub3").value = Sub3Colour;
@@ -217,44 +261,16 @@ window.onload = function() {
         document.getElementById("study").value = Sub6Colour;
         document.getElementById("Sub7").value = Sub7Colour;
 
+        //Setting the subject titles in the dropdown menu
+        document.getElementById("Sub1T").innerHTML = classList[0];
+        document.getElementById("Sub2T").innerHTML = classList[1];
+        document.getElementById("Sub3T").innerHTML = classList[2];
+        document.getElementById("Sub4T").innerHTML = classList[3];
+        document.getElementById("Sub5T").innerHTML = classList[4];
+        document.getElementById("Sub6T").innerHTML = classList[5];
+        document.getElementById("Sub7T").innerHTML = classList[6];
+
     })();
-    try{
-        var searchBar = document.getElementById("search");
-        searchBar.action = "https://xavxav82.github.io/stljson.github.io/";
-    } catch{}
-    setTimeout(RemoveNotifs, 1500);
-    let tempMenu = document.getElementById("top-menu");
-    let tempSpan = document.createElement("span");
-    let tempA = document.createElement("a");
-    let tempLi = document.createElement("li");
-    let tempLi2 = document.createElement("li");
-
-    tempLi.style.display = "list-item";
-    tempLi2.style.display = "list-item";
-
-    tempLi.innerHTML = '<div style="position:absolute" class="dropdown"><button class="dropbtn"><img class="imeg" src="https://xavxav82.github.io/stljson.github.io/palette.png">Colours</button><div style="position:fixed; top:72px" class="dropdown-content"><p>Choose your subject colours:</p><div class="Sub1"><label for="Sub1">Sub1</label><input type="color" id="Sub1" name="Sub1" value="#f6b73c" /></div><div class="Sub2"><label for="Sub2">Sub2</label><input type="color" id="Sub2" name="Sub2" value="#f6b73c" /></div><div class="Sub3"><label for="Sub3">Sub3</label><input type="color" id="Sub3" name="Sub3" value="#f6b73c" /></div><div class="Sub4"><label for="Sub4">Sub4</label><input type="color" id="Sub4" name="Sub4" value="#f6b73c" /></div><div class="Sub5"><label for="Sub5">Sub5</label><input type="color" id="Sub5" name="Sub5" value="#f6b73c" /></div><div class="Sub6"><label for="study">Sub6</label><input type="color" id="study" name="study" value="#f6b73c" /></div><div class="Sub7"><label for="Sub7">Homeroom</label><input type="color" id="Sub7" name="Sub7" value="#f6b73c" /></div><div><button class="button" id="button11">Save Preferences</button></div></div></div>';
-
-    tempLi.style.position="relative";
-    tempLi.style.zIndex="999";
-
-    tempMenu.appendChild(tempLi);
-
-    tempLi2.innerHTML = '<a href="/options" style="padding:9px;"><img class="imeg2" src="https://xavxav82.github.io/stljson.github.io/cog3.png"><span>Options</span></a>';
-    tempLi2.style.position="relative";
-    tempLi2.style.left="80px";
-
-    tempMenu.appendChild(tempLi2);
-
-    let butt = document.getElementById("button11");
-    butt.addEventListener("click", Save);
-
-
-
-
-    let style = document.createElement('style');
-    style.textContent = '.dropbtn {  background-color: #00000000;  color: white;    font-size: 13px;  border: none;  width: 80px;  height: 72px;  display: block; transition: 150ms;}.dropdown {  position: relative;  display: inline-block;}.dropdown-content {  display: none;  position: absolute;  background-color: #f1f1f1;  min-width: 160px;  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);}.dropdown-content a {  color: black;  padding: 12px 16px;  text-decoration: none;  display: block;}.dropdown-content a:hover {background-color: #1e3e76;}.dropdown:hover .dropdown-content {display: block;}.dropdown:hover .dropbtn {background-color: #1e3f76;color: white;}.imeg{  width: 35px;  height: 36px;}.imeg2{  width: 33px;  height: 33px; top: 0px; vertical-align: sup;}';
-    document.head.append(style);
-
     //Timetable page
     if(window.location.href.search("timetable")!=-1){
 
@@ -294,6 +310,7 @@ window.onload = function() {
             let Sub6Colour = await GM.getValue("Sub6Colour", "#ffc3ca");
             let Sub7Colour = await GM.getValue("Sub7Colour", "#ccccff");
             colourList = [Sub1Colour,Sub2Colour,Sub3Colour,Sub4Colour,Sub5Colour,Sub6Colour,Sub7Colour]
+            let classList = [];
             //Assigning colours
             let j=0
 
@@ -305,11 +322,15 @@ window.onload = function() {
                 if (theA != undefined){
                     if(subjDict[(theA.innerHTML)] == undefined && classes[i].innerHTML.search("<div><br>") == -1){
                         subjDict[(theA.innerHTML)] = theA.innerHTML;
+                        classList.push(theA.innerHTML);
                         colourDict[(theA.innerHTML)] = colourList[j];
                         j++;
                     }
                 }
             }
+
+
+            GM.setValue("classList", classList);
             GM.setValue("SubjDict",subjDict);
             GM.setValue("ColourDict",colourDict);
 
@@ -387,6 +408,7 @@ window.onload = function() {
             let colourDict = {};
             //Assigning colours
 
+
             for(let i = 0;i<classes.length;i++){
                 //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
                 let theA = classes[i].getElementsByTagName("a")[0];
@@ -402,21 +424,6 @@ window.onload = function() {
 
         })();
 
-        //Cocurricular
-        periods[16].remove();
-        periods[17].remove();
-        periods[18].remove();
-        periods[21].remove();
-
-        rows[16].remove();
-        rows[17].remove();
-        rows[18].remove();
-        rows[21].remove();
-
-        rows[15].innerHTML = 'Period 1 <time class="meta">8:30am-9:50am</time>';
-        rows[16].innerHTML = 'Period 2 <time class="meta">10:15am-11:35am</time>';
-        rows[17].innerHTML = 'Period 3 <time class="meta">11:35am-12:55pm</time>';
-        rows[20].innerHTML = 'Period 4 <time class="meta">2:15pm-3:35pm</time>';
 
     }else if(window.location.href.search("calendar")!=-1){
         setTimeout(Calendar, 3000);
