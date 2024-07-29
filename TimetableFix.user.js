@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        Timetable fixerqq
+// @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
 // @version     1.10
 // @author      XavXav82
