@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Timetable fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.10
+// @version     1.10.1
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -263,6 +263,8 @@ function loadPreset(i){
 //The BIG function, which runs upon the loading of the page
 window.onload = function() {
 
+
+
     //These try catch statements are used as an existance check for the (mostly) universal features
     //As such they run on every page
     //If the features dont exist for some reason then the code will just move on
@@ -310,6 +312,9 @@ window.onload = function() {
         document.head.append(style);
     }catch{}
     (async () => {
+
+
+
         //Grabs all variables
         /*let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
         let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
@@ -375,7 +380,7 @@ window.onload = function() {
 
         //In an async function because the persistant varibles are promises
         (async () => {
-            let removePS = await GM.getValue("removePS", "false");
+            let removePS = await GM.getValue("removePS", "true");
             /*let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -483,7 +488,7 @@ window.onload = function() {
 
         (async () => {
             //get variables
-            let removePS = await GM.getValue("removePS", "false");
+            let removePS = await GM.getValue("removePS", "true");
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -564,7 +569,7 @@ window.onload = function() {
             //Option switches
             let PSSwitch = document.getElementById("but1");
             let notifSwitch = document.getElementById("but2");
-            PSSwitch.checked = await GM.getValue("removePS","false");
+            PSSwitch.checked = await GM.getValue("removePS","true");
             notifSwitch.checked = await GM.getValue("notif","false");
         })();
 
@@ -588,7 +593,7 @@ window.onload = function() {
         setTimeout(searchList, 1500);
 
     }else if(window.location.href.search("learning/due")!=-1){
-        setTimeout(dueWork, 500);
+        setTimeout(dueWork, 800);
     }else if(window.location.href.search("learning/classes")!=-1){
         (async () => {
             let colourDict = await GM.getValue("ColourDict",-1);
@@ -605,4 +610,15 @@ window.onload = function() {
             }
         })();
     }
+    (async () => {
+        let firstTime = await GM.getValue("firstTime",0)
+        let secondTime = await GM.getValue("secondTime",0)
+        if(firstTime==0){
+            GM.setValue("firstTime",1);
+            window.location.href = "https://link.stleonards.vic.edu.au/timetable";
+        } else if(firstTime==1 && secondTime==0){
+            GM.setValue("secondTime",1);
+            window.location.href = "https://link.stleonards.vic.edu.au/timetable";
+        }
+    })();
 };
