@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable Fixer
+// @name        Timetable Fixer TEST
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.10
+// @version     1.10.2
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -150,7 +150,7 @@ function Save(){
 function RemoveNotifs(){
     (async () => {
         //Grabs the value of gradeNotifs to check if notif should be deleted
-        let gradeNotifs = await GM.getValue("notif", "false")
+        let gradeNotifs = await GM.getValue("notif", false)
         if(gradeNotifs == true){
             //Grabs the list of notifications
             let sidebar = document.getElementById("message-list");
@@ -172,7 +172,7 @@ function Calendar(){
 
     (async () => {
         //Grabs all the variables (there are a lot)
-        let removePS = await GM.getValue("removePS", "false");
+        let removePS = await GM.getValue("removePS", false);
         /*let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
         let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
         let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -375,7 +375,7 @@ window.onload = function() {
 
         //In an async function because the persistant varibles are promises
         (async () => {
-            let removePS = await GM.getValue("removePS", "false");
+            let removePS = await GM.getValue("removePS", false);
             /*let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -493,7 +493,7 @@ window.onload = function() {
 
         (async () => {
             //get variables
-            let removePS = await GM.getValue("removePS", "false");
+            let removePS = await GM.getValue("removePS", false);
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -586,8 +586,8 @@ window.onload = function() {
             //Option switches
             let PSSwitch = document.getElementById("but1");
             let notifSwitch = document.getElementById("but2");
-            PSSwitch.checked = await GM.getValue("removePS","false");
-            notifSwitch.checked = await GM.getValue("notif","false");
+            PSSwitch.checked = await GM.getValue("removePS",false);
+            notifSwitch.checked = await GM.getValue("notif",false);
         })();
 
     }else if(window.location.href.search("search")!=-1){
@@ -627,4 +627,15 @@ window.onload = function() {
             }
         })();
     }
+    (async () => {
+        let firstTime = await GM.getValue("firstTime",0)
+        let secondTime = await GM.getValue("secondTime",0)
+        if(firstTime==0){
+            GM.setValue("firstTime",1);
+            window.location.href = "https://link.stleonards.vic.edu.au/timetable";
+        } else if(firstTime==1 && secondTime==0){
+            GM.setValue("secondTime",1);
+            window.location.href = "https://link.stleonards.vic.edu.au/timetable";
+        }
+    })();
 };
