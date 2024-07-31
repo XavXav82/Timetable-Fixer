@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        Timetable fixer
+// @name        Timetable Fixer
 // @namespace   https://github.com/XavXav82/Timetable-Fixer/
-// @version     1.10.1
+// @version     1.10.2
 // @author      XavXav82
 // @description My plugin for timtable fixing and editing (now with colour customisation and a new search feature!)
 // @match       https://link.stleonards.vic.edu.au/timetable
@@ -98,7 +98,7 @@ function searchList(){
 }
 
 function createFilters(filterList){
-    
+
     let label = document.createElement("label");
     let checkBox = document.createElement("input");
     let firstDiv = document.createElement("div");
@@ -150,7 +150,7 @@ function Save(){
 function RemoveNotifs(){
     (async () => {
         //Grabs the value of gradeNotifs to check if notif should be deleted
-        let gradeNotifs = await GM.getValue("notif", "false")
+        let gradeNotifs = await GM.getValue("notif", false)
         if(gradeNotifs == true){
             //Grabs the list of notifications
             let sidebar = document.getElementById("message-list");
@@ -172,7 +172,7 @@ function Calendar(){
 
     (async () => {
         //Grabs all the variables (there are a lot)
-        let removePS = await GM.getValue("removePS", "false");
+        let removePS = await GM.getValue("removePS", false);
         /*let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
         let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
         let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -187,16 +187,18 @@ function Calendar(){
         let subjDict = {};
         let colourDict = {};
 
-
         //Assigning colours
         for(let i = 0;i<classes.length;i++){
             //uses a key from the subjects dictionary and gets the search query and colour from their dictionaries
             let theA = classes[i].getElementsByTagName("a")[0];
             let theSpan = classes[i].getElementsByTagName("span")[0];
+
             if((theSpan.innerHTML.split(" (")[0]) == `${SubjDict[theSpan.innerHTML.split(" (")[0]]}`){
 
                 theA.style.backgroundColor = `${ColourDict[theSpan.innerHTML.split(" (")[0]]}`;
-            } else if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+            }
+            if((classes[i].innerHTML).search("Private Study") != -1 && removePS == true){
+
                 //Removes private study if the setting is on and the subject name contains "private study"
                 classes[i].innerHTML="";
             }
@@ -380,7 +382,7 @@ window.onload = function() {
 
         //In an async function because the persistant varibles are promises
         (async () => {
-            let removePS = await GM.getValue("removePS", "true");
+            let removePS = await GM.getValue("removePS", false);
             /*let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -488,7 +490,7 @@ window.onload = function() {
 
         (async () => {
             //get variables
-            let removePS = await GM.getValue("removePS", "true");
+            let removePS = await GM.getValue("removePS", false);
             let Sub1Colour = await GM.getValue("Sub1Colour", "#fff5cc");
             let Sub2Colour = await GM.getValue("Sub2Colour", "#ccffcc");
             let Sub3Colour = await GM.getValue("Sub3Colour", "#cce0ff");
@@ -534,7 +536,6 @@ window.onload = function() {
             let preset3 = await GM.getValue("cList3",["#fff5cc","#ccffcc","#cce0ff","#cce0ff","#ffccf5","#ffc3ca", "#ccccff"]);
             let colourList = await GM.getValue("colourList",["#fff5cc","#ccffcc","#cce0ff","#cce0ff","#ffccf5","#ffc3ca", "#ccccff"]);
 
-            console.log(preset1);
 
             for(let i=1; i<4; i++){
                 let tempPreset = [];
@@ -569,8 +570,10 @@ window.onload = function() {
             //Option switches
             let PSSwitch = document.getElementById("but1");
             let notifSwitch = document.getElementById("but2");
-            PSSwitch.checked = await GM.getValue("removePS","true");
-            notifSwitch.checked = await GM.getValue("notif","false");
+            let PS = await GM.getValue("removePS",false);
+            PSSwitch.checked = PS;
+            let notif = await GM.getValue("notif",false);
+            notifSwitch.checked = notif;
         })();
 
     }else if(window.location.href.search("search")!=-1){
