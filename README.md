@@ -11,5 +11,7 @@ allowing you to reach their eportfolios easily, or just stalk them.
 
 # INSTALLATION
 Install this chrome extension: https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
+
 Go to this link: chrome://extensions/ and enable developer mode in the top right
+
 Click this link: https://github.com/XavXav82/Timetable-Fixer/raw/main/TimetableFix.user.js
